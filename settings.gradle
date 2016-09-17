@@ -1,0 +1,14 @@
+rootProject.name = 'trpc'
+
+include 'trpc-core'
+include 'trpc-server'
+include 'trpc-client'
+include 'trpc-registry:trpc-registry-zookeeper'
+findProject(':trpc-registry:trpc-registry-zookeeper')?.name = 'trpc-registry-zookeeper'
+include 'trpc-registry:trpc-registry-etcd'
+findProject(':trpc-registry:trpc-registry-etcd')?.name = 'trpc-registry-etcd'
+include 'trpc-registry:trpc-registry-redis'
+findProject(':trpc-registry:trpc-registry-redis')?.name = 'trpc-registry-redis'
+include 'trpc-registry:trpc-registry-consul'
+findProject(':trpc-registry:trpc-registry-consul')?.name = 'trpc-registry-consul'
+
