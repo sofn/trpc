@@ -2,6 +2,7 @@ package com.github.sofn.trpc.server;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.TMultiplexedProcessor;
 import org.apache.thrift.protocol.TCompactProtocol;
@@ -23,7 +24,7 @@ import java.util.List;
 @Data
 @Slf4j
 public class ThriftServerPublisher {
-    private IRegistry registry;
+    private List<IRegistry> registrys;
     private String appkey;
     private int port;
     private List<TBaseProcessor> services;
@@ -55,7 +56,9 @@ public class ThriftServerPublisher {
 
             log.info("Starting the Thrift server...");
             server.serve();
-            registry.registry(appkey, inetAddress, port);
+            if (CollectionUtils.isEmpty(registrys)) {
+                registrys.stream().forEach(r -> r.registry(appkey, inetAddress, port));
+            }
         } catch (Exception e) {
             log.error("publish thrift server error", e);
         }
