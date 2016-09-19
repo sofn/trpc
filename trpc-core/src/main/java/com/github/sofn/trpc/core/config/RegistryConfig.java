@@ -1,4 +1,4 @@
-package com.github.sofn.trpc.core.model;
+package com.github.sofn.trpc.core.config;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -13,27 +13,28 @@ import java.util.Map;
  * @version 1.0 Created at: 2016-09-19 16:53
  */
 @Data
-public class RegistryData {
-    private String protocol;
-    private String host;
-    private int port;
+public class RegistryConfig extends AbstractConfig {
+    private String registry;
+    private ThriftServerInfo serverInfo;
     private int weight = 100; //权重
 
+    private Map<String, String> options;
+
     public String getStringData() {
-        return protocol + "://" + host + ":" + port + "?weight=" + weight;
+        return registry + "://" + serverInfo.getHost() + ":" + serverInfo.getPort() + "?weight=" + weight + "&id=" + id
+                + "&" + Joiner.on("&").withKeyValueSeparator("=").join(options);
     }
 
-    public static RegistryData parse(String data) {
+    public static RegistryConfig parse(String data) {
         if (StringUtils.isBlank(data)) {
             return null;
         }
-        RegistryData result = new RegistryData();
-        result.setProtocol(data.substring(0, data.indexOf("://")));
+        RegistryConfig result = new RegistryConfig();
+        result.setRegistry(data.substring(0, data.indexOf("://")));
 
         int hostIpEndIndex = data.indexOf("?") > 0 ? data.indexOf("?") : data.length();
-        String hostIp = data.substring(data.indexOf("://") + 3, hostIpEndIndex);
-        result.setHost(hostIp.substring(0, hostIp.indexOf(":")));
-        result.setPort(NumberUtils.toInt(hostIp.substring(hostIp.indexOf(":") + 1)));
+        String hostAndPort = data.substring(data.indexOf("://") + 3, hostIpEndIndex);
+        result.setServerInfo(new ThriftServerInfo(hostAndPort));
 
         if (data.indexOf("?") > 0) {
             Map<String, String> params = Splitter.on("&").withKeyValueSeparator("=").split(data.substring(data.indexOf("?") + 1));
