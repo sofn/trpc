@@ -1,7 +1,4 @@
 #!/bin/bash
-rm -rf src
-mkdir -p src/main/java
-thrift --gen java -out ../../java hello.thrift
-if [ $? != 0 ]; then
-	exit 1
-fi
+SCRIPT_DIR=`dirname $0`
+thrift --gen java -out ${SCRIPT_DIR}/../../java fb303.thrift
+thrift --gen java -out ${SCRIPT_DIR}/../../java hello.thrift

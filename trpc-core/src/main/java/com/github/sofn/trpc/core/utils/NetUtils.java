@@ -12,9 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
- * IP and Port Helper for RPC,
- *
- * @author shawn.qianx
+ * IP and Port Helper for RPC
  */
 
 public class NetUtils {
@@ -115,8 +113,7 @@ public class NetUtils {
     }
 
     public static InetSocketAddress getLocalSocketAddress(String host, int port) {
-        return isInvalidLocalHost(host) ?
-                new InetSocketAddress(port) : new InetSocketAddress(host, port);
+        return isInvalidLocalHost(host) ? new InetSocketAddress(port) : new InetSocketAddress(host, port);
     }
 
     private static final Pattern IP_PATTERN = Pattern.compile("\\d{1,3}(\\.\\d{1,3}){3,5}$");
@@ -196,70 +193,6 @@ public class NetUtils {
         }
         logger.error("Could not get local host ip address, will use 127.0.0.1 instead.");
         return localAddress;
-    }
-
-    private static final Map<String, String> hostNameCache = new ConcurrentHashMap<>(1000);
-
-    public static String getHostName(String address) {
-        try {
-            int i = address.indexOf(':');
-            if (i > -1) {
-                address = address.substring(0, i);
-            }
-            String hostname = hostNameCache.get(address);
-            if (hostname != null && hostname.length() > 0) {
-                return hostname;
-            }
-            InetAddress inetAddress = InetAddress.getByName(address);
-            if (inetAddress != null) {
-                hostname = inetAddress.getHostName();
-                hostNameCache.put(address, hostname);
-                return hostname;
-            }
-        } catch (Throwable e) {
-            // ignore
-        }
-        return address;
-    }
-
-    /**
-     * @param hostName
-     * @return ip address or hostName if UnknownHostException
-     */
-    public static String getIpByHost(String hostName) {
-        try {
-            return InetAddress.getByName(hostName).getHostAddress();
-        } catch (UnknownHostException e) {
-            return hostName;
-        }
-    }
-
-    public static String toAddressString(InetSocketAddress address) {
-        return address.getAddress().getHostAddress() + ":" + address.getPort();
-    }
-
-    public static InetSocketAddress toAddress(String address) {
-        int i = address.indexOf(':');
-        String host;
-        int port;
-        if (i > -1) {
-            host = address.substring(0, i);
-            port = Integer.parseInt(address.substring(i + 1));
-        } else {
-            host = address;
-            port = 0;
-        }
-        return new InetSocketAddress(host, port);
-    }
-
-    public static String toURL(String protocol, String host, int port, String path) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(protocol).append("://");
-        sb.append(host).append(':').append(port);
-        if (path.charAt(0) != '/')
-            sb.append('/');
-        sb.append(path);
-        return sb.toString();
     }
 
 }

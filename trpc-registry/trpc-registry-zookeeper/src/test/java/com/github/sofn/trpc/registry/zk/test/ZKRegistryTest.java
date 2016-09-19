@@ -24,7 +24,6 @@ public class ZKRegistryTest {
 
         registry.registry("testkey", InetAddress.getLocalHost(), 8080);
         TimeUnit.SECONDS.sleep(20);
-
     }
 
 }
