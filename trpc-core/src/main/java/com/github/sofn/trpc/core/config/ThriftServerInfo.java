@@ -1,6 +1,7 @@
 package com.github.sofn.trpc.core.config;
 
 import com.google.common.base.Splitter;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * Version: 1.0  Created at 2016-09-19 23:02.
  */
 @Data
+@AllArgsConstructor
 public class ThriftServerInfo {
     private static Splitter splitter = Splitter.on(':');
     private final String host;

@@ -1,6 +1,6 @@
 package com.github.sofn.trpc.client.pool;
 
-import com.github.phantomthief.thrift.client.pool.ThriftServerInfo;
+import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import org.apache.thrift.transport.TTransport;
 
 /**
