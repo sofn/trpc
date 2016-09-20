@@ -7,7 +7,7 @@ import org.apache.thrift.transport.TTransport;
  * Authors: sofn
  * Version: 1.0  Created at 2016-09-19 22:59.
  */
-public interface ThriftConnectionPoolProvider {
+public interface BioConnectionPoolProvider {
     /**
      * <p>
      * getConnection.

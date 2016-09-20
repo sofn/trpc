@@ -1,7 +1,6 @@
 package com.github.sofn.trpc.client.pool.impl;
 
-import com.github.sofn.trpc.client.pool.ThriftConnectionFactory;
-import com.github.sofn.trpc.client.pool.ThriftConnectionPoolProvider;
+import com.github.sofn.trpc.client.pool.BioConnectionPoolProvider;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
@@ -23,7 +22,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
  * @version $Id: $Id
  */
 @Slf4j
-public final class DefaultThriftConnectionPoolImpl implements ThriftConnectionPoolProvider {
+public final class DefaultBioConnectionPoolImpl implements BioConnectionPoolProvider {
 
     private static final int MIN_CONN = 1;
     private static final int MAX_CONN = 1000;
@@ -31,12 +30,12 @@ public final class DefaultThriftConnectionPoolImpl implements ThriftConnectionPo
 
     private final GenericKeyedObjectPool<ThriftServerInfo, TTransport> connections;
 
-    public DefaultThriftConnectionPoolImpl(GenericKeyedObjectPoolConfig config,
+    public DefaultBioConnectionPoolImpl(GenericKeyedObjectPoolConfig config,
                                            Function<ThriftServerInfo, TTransport> transportProvider) {
-        connections = new GenericKeyedObjectPool<>(new ThriftConnectionFactory(transportProvider), config);
+        connections = new GenericKeyedObjectPool<>(new BioConnectionFactory(transportProvider), config);
     }
 
-    public DefaultThriftConnectionPoolImpl(GenericKeyedObjectPoolConfig config) {
+    public DefaultBioConnectionPoolImpl(GenericKeyedObjectPoolConfig config) {
         this(config, info -> {
             TSocket tsocket = new TSocket(info.getHost(), info.getPort());
             tsocket.setTimeout(TIMEOUT);
@@ -48,7 +47,7 @@ public final class DefaultThriftConnectionPoolImpl implements ThriftConnectionPo
      * <p>
      * getInstance.
      */
-    public static DefaultThriftConnectionPoolImpl getInstance() {
+    public static DefaultBioConnectionPoolImpl getInstance() {
         return LazyHolder.INSTANCE;
     }
 
@@ -87,7 +86,7 @@ public final class DefaultThriftConnectionPoolImpl implements ThriftConnectionPo
 
     private static class LazyHolder {
 
-        private static final DefaultThriftConnectionPoolImpl INSTANCE;
+        private static final DefaultBioConnectionPoolImpl INSTANCE;
 
         static {
             GenericKeyedObjectPoolConfig config = new GenericKeyedObjectPoolConfig();
@@ -99,7 +98,7 @@ public final class DefaultThriftConnectionPoolImpl implements ThriftConnectionPo
             config.setMinEvictableIdleTimeMillis(MINUTES.toMillis(1));
             config.setSoftMinEvictableIdleTimeMillis(MINUTES.toMillis(1));
             config.setJmxEnabled(false);
-            INSTANCE = new DefaultThriftConnectionPoolImpl(config);
+            INSTANCE = new DefaultBioConnectionPoolImpl(config);
         }
     }
 

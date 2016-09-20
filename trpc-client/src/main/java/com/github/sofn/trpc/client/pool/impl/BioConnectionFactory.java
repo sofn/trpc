@@ -1,4 +1,4 @@
-package com.github.sofn.trpc.client.pool;
+package com.github.sofn.trpc.client.pool.impl;
 
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +14,11 @@ import java.util.function.Function;
  * @version 1.0 Created at: 2016-09-20 11:55
  */
 @Slf4j
-public class ThriftConnectionFactory implements KeyedPooledObjectFactory<ThriftServerInfo, TTransport> {
+public class BioConnectionFactory implements KeyedPooledObjectFactory<ThriftServerInfo, TTransport> {
 
     private final Function<ThriftServerInfo, TTransport> transportProvider;
 
-    public ThriftConnectionFactory(Function<ThriftServerInfo, TTransport> transportProvider) {
+    public BioConnectionFactory(Function<ThriftServerInfo, TTransport> transportProvider) {
         this.transportProvider = transportProvider;
     }
 
