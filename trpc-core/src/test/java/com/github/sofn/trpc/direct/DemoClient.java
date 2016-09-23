@@ -39,7 +39,7 @@ public class DemoClient {
             final TNonblockingTransport transport = new TNonblockingSocket("localhost", this.port, 1000);
             //设置协议
             TProtocolFactory protocolFactory = (TProtocolFactory) tTransport -> {
-                TProtocol protocol = new TCompactProtocol(transport);
+                TProtocol protocol = new TCompactProtocol(tTransport);
                 return new TMultiplexedProtocol(protocol, Hello.class.getName());
             };
 
@@ -66,6 +66,7 @@ public class DemoClient {
                 }
             });
             log.info("结束：" + System.currentTimeMillis());
+            TimeUnit.MILLISECONDS.sleep(100);
         } catch (Exception e) {
             log.error("error", e);
         }

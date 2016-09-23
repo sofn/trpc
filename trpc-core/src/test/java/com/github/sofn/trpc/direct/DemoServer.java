@@ -22,16 +22,16 @@ public class DemoServer {
     private Thread thread;
 
     public void start(CountDownLatch latch, int port) {
-        //发布多个服务
-        TMultiplexedProcessor processor = new TMultiplexedProcessor();
-        processor.registerProcessor(ClassNameUtils.getClassName(Hello.class), new Hello.Processor<>(new HelloServer()));
-
         try {
             TNonblockingServerSocket serverTransport = new TNonblockingServerSocket(port);
             //异步IO，需要使用TFramedTransport，它将分块缓存读取。
             TTransportFactory transportFactory = new TFramedTransport.Factory();
             //使用高密度二进制协议
             TProtocolFactory proFactory = new TCompactProtocol.Factory();
+            //发布多个服务
+            TMultiplexedProcessor processor = new TMultiplexedProcessor();
+            processor.registerProcessor(ClassNameUtils.getClassName(Hello.class), new Hello.Processor<>(new HelloServer()));
+
             TServer server = new TThreadedSelectorServer(new
                     TThreadedSelectorServer.Args(serverTransport)
                     .transportFactory(transportFactory)
@@ -57,15 +57,9 @@ public class DemoServer {
         thread.start();
         try {
             latch.await();
-            TimeUnit.SECONDS.sleep(1);
+            TimeUnit.MILLISECONDS.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-    }
-
-    public void stop() {
-        if (this.thread != null) {
-            this.thread.interrupt();
         }
     }
 
