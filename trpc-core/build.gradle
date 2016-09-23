@@ -1,6 +1,5 @@
 dependencies {
     compile group: 'org.apache.thrift', name: 'libthrift', version: "${thriftVersion}"
-    compile group: 'org.apache.thrift', name: 'libfb303', version: "${thriftVersion}"
     //common
     compile group: 'com.google.guava', name: 'guava', version: "${guavaVersion}"
     compile group: 'org.apache.commons', name: 'commons-lang3', version: "${commonsLangVersion}"
