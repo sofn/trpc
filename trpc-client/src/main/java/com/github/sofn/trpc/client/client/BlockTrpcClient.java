@@ -1,8 +1,8 @@
 package com.github.sofn.trpc.client.client;
 
+import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import com.github.sofn.trpc.core.exception.TRpcException;
 import com.github.sofn.trpc.core.utils.ClassNameUtils;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TCompactProtocol;
@@ -17,10 +17,13 @@ import org.apache.thrift.transport.TTransportException;
  * @author sofn
  * @version 1.0 Created at: 2016-09-23 14:29
  */
-@Data
 @Slf4j
-public class NioTrpcClient extends AbstractTrpcClient<TServiceClient> {
+public class BlockTrpcClient extends AbstractTrpcClient<TServiceClient> {
     private TProtocol protocol;
+
+    public BlockTrpcClient(ThriftServerInfo serverInfo) {
+        super(serverInfo);
+    }
 
     @Override
     public void open() {
@@ -52,8 +55,8 @@ public class NioTrpcClient extends AbstractTrpcClient<TServiceClient> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <M extends TServiceClient> M getClient(final Class<M> clazz) {
-        return (M) super.clients.computeIfAbsent(ClassNameUtils.getOuterClassName(clazz), className -> {
+    public <C extends TServiceClient> C getClient(final Class<C> clazz) {
+        return (C) super.clients.computeIfAbsent(ClassNameUtils.getOuterClassName(clazz), className -> {
             TMultiplexedProtocol tmp = new TMultiplexedProtocol(this.protocol, className);
             try {
                 return clazz.getConstructor(TProtocol.class).newInstance(tmp);

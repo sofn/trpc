@@ -58,7 +58,6 @@ public class DemoClient {
                 public void onComplete(Hello.AsyncClient.hi_call hi_call) {
                     log.info("complete： " + System.currentTimeMillis());
                     try {
-                        Thread.sleep(100);
                         log.info(hi_call.getResult());
                     } catch (Exception e) {
                         log.error("error", e);

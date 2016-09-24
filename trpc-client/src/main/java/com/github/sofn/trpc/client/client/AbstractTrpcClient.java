@@ -2,6 +2,8 @@ package com.github.sofn.trpc.client.client;
 
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,10 +12,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author sofn
  * @version 1.0 Created at: 2016-09-23 14:13
  */
-@Data
 public abstract class AbstractTrpcClient<T> {
     protected Map<String, T> clients = new ConcurrentHashMap<>();
     protected ThriftServerInfo serverInfo;
+
+    public AbstractTrpcClient(ThriftServerInfo serverInfo) {
+        this.serverInfo = serverInfo;
+    }
 
     /**
      * 建立socket连接
@@ -36,5 +41,5 @@ public abstract class AbstractTrpcClient<T> {
      * @param clazz client类
      * @return client
      */
-    public abstract <M extends T> M getClient(final Class<M> clazz);
+    public abstract <C extends T> C getClient(Class<C> clazz);
 }

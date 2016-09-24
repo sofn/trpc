@@ -1,6 +1,6 @@
 package com.github.sofn.trpc.client.pool.impl;
 
-import com.github.sofn.trpc.client.client.AbstractTrpcClient;
+import com.github.sofn.trpc.client.client.BlockTrpcClient;
 import com.github.sofn.trpc.client.pool.TrpcClientPoolProvider;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -11,24 +11,24 @@ import java.util.function.Function;
 
 /**
  * <p>
- * DefaultTrpcClientPoolImpl class.
+ * BlockTrpcClientPoolImpl class.
  * </p>
  *
  * @author sofn
  * @version 1.0 Created at: 2016-09-22 14:13
  */
 @Slf4j
-public final class DefaultTrpcClientPoolImpl implements TrpcClientPoolProvider {
+public final class BlockTrpcClientPoolImpl implements TrpcClientPoolProvider<BlockTrpcClient> {
 
-    private final GenericKeyedObjectPool<ThriftServerInfo, AbstractTrpcClient> connections;
+    private final GenericKeyedObjectPool<ThriftServerInfo, BlockTrpcClient> connections;
 
-    public DefaultTrpcClientPoolImpl(GenericKeyedObjectPoolConfig config,
-                                     Function<ThriftServerInfo, AbstractTrpcClient> transportProvider) {
+    public BlockTrpcClientPoolImpl(GenericKeyedObjectPoolConfig config,
+                                   Function<ThriftServerInfo, BlockTrpcClient> transportProvider) {
         connections = new GenericKeyedObjectPool<>(new TrpcClientFactory(transportProvider), config);
     }
 
     @Override
-    public AbstractTrpcClient getConnection(ThriftServerInfo thriftServerInfo) {
+    public BlockTrpcClient getConnection(ThriftServerInfo thriftServerInfo) {
         try {
             return connections.borrowObject(thriftServerInfo);
         } catch (Exception e) {
@@ -38,12 +38,12 @@ public final class DefaultTrpcClientPoolImpl implements TrpcClientPoolProvider {
     }
 
     @Override
-    public void returnConnection(ThriftServerInfo thriftServerInfo, AbstractTrpcClient transport) {
+    public void returnConnection(ThriftServerInfo thriftServerInfo, BlockTrpcClient transport) {
         connections.returnObject(thriftServerInfo, transport);
     }
 
     @Override
-    public void returnBrokenConnection(ThriftServerInfo thriftServerInfo, AbstractTrpcClient transport) {
+    public void returnBrokenConnection(ThriftServerInfo thriftServerInfo, BlockTrpcClient transport) {
         try {
             connections.invalidateObject(thriftServerInfo, transport);
         } catch (Exception e) {
