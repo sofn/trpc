@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 /**
- * @author lishaofeng
+ * @author sofn
  * @version 1.0 Created at: 2016-09-23 23:12
  */
 public class TrpcClientPoolTest {

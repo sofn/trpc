@@ -2,6 +2,7 @@ package com.github.sofn.trpc.direct;
 
 import com.github.sofn.trpc.core.utils.ClassNameUtils;
 import com.github.sofn.trpc.demo.Hello;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TMultiplexedProcessor;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
@@ -12,12 +13,12 @@ import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.apache.thrift.transport.TTransportFactory;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
- * @author lishaofeng
+ * @author sofn
  * @version 1.0 Created at: 2016-09-23 19:09
  */
+@Slf4j
 public class DemoServer {
     private Thread thread;
 
@@ -57,7 +58,6 @@ public class DemoServer {
         thread.start();
         try {
             latch.await();
-            TimeUnit.MILLISECONDS.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -1,14 +1,16 @@
 package com.github.sofn.trpc.core.utils;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.net.ServerSocket;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -142,16 +144,12 @@ public class NetUtils {
      * @return 本地网卡IP
      */
     public static InetAddress getLocalAddress() {
-        if (LOCAL_ADDRESS != null)
+        if (LOCAL_ADDRESS != null) {
             return LOCAL_ADDRESS;
+        }
         InetAddress localAddress = getLocalAddress0();
         LOCAL_ADDRESS = localAddress;
         return localAddress;
-    }
-
-    public static String getLogHost() {
-        InetAddress address = LOCAL_ADDRESS;
-        return address == null ? LOCALHOST : address.getHostAddress();
     }
 
     private static InetAddress getLocalAddress0() {
@@ -171,16 +169,23 @@ public class NetUtils {
                     try {
                         NetworkInterface network = interfaces.nextElement();
                         Enumeration<InetAddress> addresses = network.getInetAddresses();
-                        if (addresses != null) {
-                            while (addresses.hasMoreElements()) {
-                                try {
-                                    InetAddress address = addresses.nextElement();
-                                    if (isValidAddress(address)) {
+                        while (addresses.hasMoreElements()) {
+                            try {
+                                InetAddress address = addresses.nextElement();
+                                if (isValidAddress(address)) {
+                                    if (localAddress != null) {
+                                        String[] split = address.getHostAddress().split("\\.");
+                                        byte[] bytes = new byte[split.length];
+                                        for (int i = 0; i < split.length; i++) {
+                                            bytes[i] = (byte) NumberUtils.toInt(split[i]);
+                                        }
+                                        return InetAddress.getByAddress(localAddress.getHostName(), bytes);
+                                    } else {
                                         return address;
                                     }
-                                } catch (Throwable e) {
-                                    logger.warn("Failed to retriving ip address, " + e.getMessage(), e);
                                 }
+                            } catch (Throwable e) {
+                                logger.warn("Failed to retriving ip address, " + e.getMessage(), e);
                             }
                         }
                     } catch (Throwable e) {

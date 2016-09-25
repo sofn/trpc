@@ -1,10 +1,8 @@
 package com.github.sofn.trpc.server;
 
-import com.github.sofn.trpc.core.IRegistry;
-import lombok.Data;
+import com.github.sofn.trpc.core.config.ServiceArg;
+import com.github.sofn.trpc.server.config.ServerArg;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.TMultiplexedProcessor;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
@@ -14,54 +12,55 @@ import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.apache.thrift.transport.TTransportFactory;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.List;
 
 /**
  * Authors: sofn
  * Version: 1.0  Created at 2016-09-17 23:44.
  */
-@Data
 @Slf4j
 public class ThriftServerPublisher {
-    private List<IRegistry> registrys;
-    private String appkey;
-    private int port;
-    private List<TBaseProcessor> services;
+    private ServerArg serverArg;
+    private TServer server;
+
+    public ThriftServerPublisher(ServerArg serverArg) {
+        serverArg.afterPropertiesSet();
+        this.serverArg = serverArg;
+    }
 
     public void init() {
         try {
             TMultiplexedProcessor processor = new TMultiplexedProcessor();
-            for (TBaseProcessor service : services) {
-                String className = service.getClass().getName();
+            for (ServiceArg service : serverArg.getServices()) {
+                String className = service.getService();
                 if (className.endsWith("$Processor")) {
                     className = className.substring(0, className.indexOf("$Processor"));
                 }
-                processor.registerProcessor(className, service);
+                processor.registerProcessor(className, service.getProcessor());
             }
-            //serverSocket
-            InetAddress inetAddress = InetAddress.getLocalHost();
-            TNonblockingServerSocket serverTransport = new TNonblockingServerSocket(new InetSocketAddress(inetAddress, port));
+            TNonblockingServerSocket serverTransport = new TNonblockingServerSocket(new InetSocketAddress(serverArg.getHost(), serverArg.getPort()));
             //异步IO，需要使用TFramedTransport，它将分块缓存读取。
             TTransportFactory transportFactory = new TFramedTransport.Factory();
             //使用高密度二进制协议
             TProtocolFactory proFactory = new TCompactProtocol.Factory();
-            // Use this for a multithreaded server
-            TServer server = new TThreadedSelectorServer(new
+            // Use this for a multithreaded key
+            this.server = new TThreadedSelectorServer(new
                     TThreadedSelectorServer.Args(serverTransport)
                     .transportFactory(transportFactory)
                     .protocolFactory(proFactory)
                     .processor(processor)
             );
-
-            log.info("Starting the Thrift server...");
+            log.info("Starting the Thrift key...");
+            server.setServerEventHandler(new TrpcRegistryEventHandler(serverArg));
             server.serve();
-            if (CollectionUtils.isEmpty(registrys)) {
-                registrys.stream().forEach(r -> r.registry(appkey, inetAddress, port));
-            }
         } catch (Exception e) {
-            log.error("publish thrift server error", e);
+            log.error("publish thrift key error", e);
+        }
+    }
+
+    public void stop() {
+        if (this.server != null && this.server.isServing()) {
+            this.server.stop();
         }
     }
 }

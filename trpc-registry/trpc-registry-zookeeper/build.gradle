@@ -1,5 +1,6 @@
 dependencies {
     compile project(":trpc-core")
+    compile project(":trpc-server")
     testCompile project(':trpc-core').sourceSets.test.output
     compile group: 'org.apache.curator', name: 'curator-framework', version: "${curatorVersion}"
     compile group: 'org.apache.curator', name: 'curator-recipes', version: "${curatorVersion}"

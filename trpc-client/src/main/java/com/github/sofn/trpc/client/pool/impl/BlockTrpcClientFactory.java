@@ -14,11 +14,11 @@ import java.util.function.Function;
  * @version 1.0 Created at: 2016-09-20 11:55
  */
 @Slf4j
-public class TrpcClientFactory implements KeyedPooledObjectFactory<ThriftServerInfo, BlockTrpcClient> {
+public class BlockTrpcClientFactory implements KeyedPooledObjectFactory<ThriftServerInfo, BlockTrpcClient> {
 
     private final Function<ThriftServerInfo, BlockTrpcClient> transportProvider;
 
-    public TrpcClientFactory(Function<ThriftServerInfo, BlockTrpcClient> transportProvider) {
+    public BlockTrpcClientFactory(Function<ThriftServerInfo, BlockTrpcClient> transportProvider) {
         this.transportProvider = transportProvider;
     }
 

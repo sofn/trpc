@@ -4,7 +4,7 @@ import com.github.sofn.trpc.demo.Hello;
 import org.apache.thrift.TException;
 
 /**
- * @author lishaofeng
+ * @author sofn
  * @version 1.0 Created at: 2016-09-23 19:11
  */
 public class HelloServer implements Hello.Iface {

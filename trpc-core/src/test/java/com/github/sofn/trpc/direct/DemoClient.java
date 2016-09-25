@@ -17,7 +17,7 @@ import org.junit.Test;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author lishaofeng
+ * @author sofn
  * @version 1.0 Created at: 2016-09-23 19:09
  */
 @Slf4j
@@ -36,7 +36,7 @@ public class DemoClient {
             //异步调用管理器
             TAsyncClientManager clientManager = new TAsyncClientManager();
             //设置传输通道，调用非阻塞IO。
-            final TNonblockingTransport transport = new TNonblockingSocket("localhost", this.port, 1000);
+            final TNonblockingTransport transport = new TNonblockingSocket("127.0.0.1", this.port, 1000);
             //设置协议
             TProtocolFactory protocolFactory = (TProtocolFactory) tTransport -> {
                 TProtocol protocol = new TCompactProtocol(tTransport);
@@ -84,6 +84,8 @@ public class DemoClient {
 
             TMultiplexedProtocol mp2 = new TMultiplexedProtocol(protocol, Hello.class.getName());
             Hello.Client helloClient2 = new Hello.Client(mp2);
+            log.info(helloClient2.hi("tom"));
+            log.info(helloClient2.hi("tom"));
             log.info(helloClient2.hi("tom"));
             log.info("结束：" + System.currentTimeMillis());
             transport.close();

@@ -34,7 +34,7 @@ public class BlockTrpcClient extends AbstractTrpcClient<TServiceClient> {
         try {
             transport.open();
         } catch (TTransportException e) {
-            log.error("connect thrift server error", e);
+            log.error("connect thrift key error", e);
             throw new TRpcException(e);
         }
 

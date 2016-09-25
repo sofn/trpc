@@ -24,7 +24,7 @@ public final class BlockTrpcClientPoolImpl implements TrpcClientPoolProvider<Blo
 
     public BlockTrpcClientPoolImpl(GenericKeyedObjectPoolConfig config,
                                    Function<ThriftServerInfo, BlockTrpcClient> transportProvider) {
-        connections = new GenericKeyedObjectPool<>(new TrpcClientFactory(transportProvider), config);
+        connections = new GenericKeyedObjectPool<>(new BlockTrpcClientFactory(transportProvider), config);
     }
 
     @Override
