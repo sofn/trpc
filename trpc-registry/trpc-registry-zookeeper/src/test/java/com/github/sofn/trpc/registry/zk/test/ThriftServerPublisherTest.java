@@ -46,6 +46,7 @@ public class ThriftServerPublisherTest {
         DemoClient demoClient = new DemoClient();
         demoClient.bioCall();
         demoClient.nioCall();
+        publisher.stop();
     }
 
 }
