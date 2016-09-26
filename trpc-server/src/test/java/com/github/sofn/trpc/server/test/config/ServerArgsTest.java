@@ -1,9 +1,9 @@
 package com.github.sofn.trpc.server.test.config;
 
-import com.github.sofn.trpc.core.config.ServiceArg;
+import com.github.sofn.trpc.core.config.ServiceArgs;
 import com.github.sofn.trpc.demo.Hello;
 import com.github.sofn.trpc.direct.HelloServer;
-import com.github.sofn.trpc.server.config.ServerArg;
+import com.github.sofn.trpc.server.config.ServerArgs;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -16,38 +16,38 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Version: 1.0  Created at 2016-09-25 18:12.
  */
 @Slf4j
-public class ServerArgTest {
+public class ServerArgsTest {
 
     @Test
     public void testNormal() {
-        ServerArg arg = ServerArg.builder()
+        ServerArgs arg = ServerArgs.builder()
                 .appkey("test")
                 .port(8080)
                 .host("127.0.0.1")
                 .hostName("localhost")
                 .weight(80)
-                .service(new ServiceArg(new Hello.Processor<>(new HelloServer()), "helloService", 80, 100))
-                .service(new ServiceArg(new Hello.Processor<>(new HelloServer()), "helloService2", 80, 100))
+                .service(new ServiceArgs(new Hello.Processor<>(new HelloServer()), "helloService", 80, 100))
+                .service(new ServiceArgs(new Hello.Processor<>(new HelloServer()), "helloService2", 80, 100))
                 .build();
         arg.afterPropertiesSet();
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void testEmpty() {
-        ServerArg arg = ServerArg.builder()
+        ServerArgs arg = ServerArgs.builder()
                 .appkey("")
                 .port(8080)
                 .host("")
                 .weight(80)
-                .service(new ServiceArg(new Hello.Processor<>(new HelloServer()), "helloService", 80, 100))
-                .service(new ServiceArg(new Hello.Processor<>(new HelloServer()), "helloService2", 80, 100))
+                .service(new ServiceArgs(new Hello.Processor<>(new HelloServer()), "helloService", 80, 100))
+                .service(new ServiceArgs(new Hello.Processor<>(new HelloServer()), "helloService2", 80, 100))
                 .build();
         arg.afterPropertiesSet();
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void testEmptyList() {
-        ServerArg arg = ServerArg.builder()
+        ServerArgs arg = ServerArgs.builder()
                 .appkey("test")
                 .port(8080)
                 .host("127.0.0.1")
@@ -59,24 +59,24 @@ public class ServerArgTest {
 
     @Test
     public void testAfterPropertiesSet() {
-        ServerArg arg = ServerArg.builder()
+        ServerArgs arg = ServerArgs.builder()
                 .appkey("test")
                 .port(8080)
                 .host("127.0.0.1")
                 .weight(80)
-                .service(new ServiceArg(new Hello.Processor<>(new HelloServer()), "helloService", 80, 100))
-                .service(new ServiceArg(new Hello.Processor<>(new HelloServer()), "helloService2", 80, 100))
+                .service(new ServiceArgs(new Hello.Processor<>(new HelloServer()), "helloService", 80, 100))
+                .service(new ServiceArgs(new Hello.Processor<>(new HelloServer()), "helloService2", 80, 100))
                 .build();
         arg.afterPropertiesSet();
         assertThat(arg.getPort()).isEqualTo(8080);
         assertThat(arg.getHost()).isEqualTo("127.0.0.1");
 
-        arg = ServerArg.builder()
+        arg = ServerArgs.builder()
                 .appkey("test")
                 .port(8080)
                 .weight(80)
-                .service(new ServiceArg(new Hello.Processor<>(new HelloServer()), "helloService", 80, 100))
-                .service(new ServiceArg(new Hello.Processor<>(new HelloServer()), "helloService2", 80, 100))
+                .service(new ServiceArgs(new Hello.Processor<>(new HelloServer()), "helloService", 80, 100))
+                .service(new ServiceArgs(new Hello.Processor<>(new HelloServer()), "helloService2", 80, 100))
                 .build();
         arg.afterPropertiesSet();
         assertThat(arg.getPort()).isEqualTo(8080);

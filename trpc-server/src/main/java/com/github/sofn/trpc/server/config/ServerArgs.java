@@ -2,7 +2,7 @@ package com.github.sofn.trpc.server.config;
 
 import com.github.sofn.trpc.core.IRegistry;
 import com.github.sofn.trpc.core.config.RegistryConfig;
-import com.github.sofn.trpc.core.config.ServiceArg;
+import com.github.sofn.trpc.core.config.ServiceArgs;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import com.github.sofn.trpc.core.utils.NetUtils;
 import com.github.sofn.trpc.core.utils.ValidationUtils;
@@ -27,12 +27,12 @@ import java.util.stream.Collectors;
  */
 @Getter
 @Builder
-public class ServerArg {
+public class ServerArgs {
     @Singular
     private List<IRegistry> registrys = Collections.emptyList();
     @Size(min = 1, max = 100)
     @Singular
-    private List<ServiceArg> services = Collections.emptyList();
+    private List<ServiceArgs> services = Collections.emptyList();
     @NotBlank
     private String appkey;  //localAppKey
     @NotBlank
@@ -59,7 +59,7 @@ public class ServerArg {
     public RegistryConfig getRegistryConfig() {
         return RegistryConfig.builder()
                 .serverInfo(new ThriftServerInfo(this.host, this.port))
-                .servers(this.services.stream().map(ServiceArg::getServiceConfig).collect(Collectors.toList()))
+                .servers(this.services.stream().map(ServiceArgs::getServiceConfig).collect(Collectors.toList()))
                 .appKey(this.appkey)
                 .hostName(this.hostName)
                 .weight(this.weight)

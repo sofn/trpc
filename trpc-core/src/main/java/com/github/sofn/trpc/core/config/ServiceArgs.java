@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 @Setter
 @Getter
 @AllArgsConstructor
-public class ServiceArg {
+public class ServiceArgs {
     @NotNull
     private TBaseProcessor processor;
     @NotBlank

@@ -1,11 +1,11 @@
 package com.github.sofn.trpc.registry.zk.test;
 
-import com.github.sofn.trpc.core.config.ServiceArg;
+import com.github.sofn.trpc.core.config.ServiceArgs;
 import com.github.sofn.trpc.core.utils.ClassNameUtils;
 import com.github.sofn.trpc.demo.Hello;
 import com.github.sofn.trpc.direct.HelloServer;
 import com.github.sofn.trpc.registry.zk.ZKRegistry;
-import com.github.sofn.trpc.server.config.ServerArg;
+import com.github.sofn.trpc.server.config.ServerArgs;
 import org.junit.Test;
 
 import java.net.UnknownHostException;
@@ -26,13 +26,13 @@ public class ZKRegistryTest {
 
         registry.initConnect();
 
-        ServerArg arg = ServerArg.builder()
+        ServerArgs arg = ServerArgs.builder()
                 .appkey("test")
                 .port(8080)
                 .host("127.0.0.1")
                 .hostName("localhost")
                 .weight(80)
-                .service(new ServiceArg(new Hello.Processor<>(new HelloServer()), ClassNameUtils.getClassName(Hello.class), 80, 100))
+                .service(new ServiceArgs(new Hello.Processor<>(new HelloServer()), ClassNameUtils.getClassName(Hello.class), 80, 100))
                 .build();
         arg.afterPropertiesSet();
 

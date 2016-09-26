@@ -1,7 +1,7 @@
 package com.github.sofn.trpc.server;
 
 import com.github.sofn.trpc.core.IRegistry;
-import com.github.sofn.trpc.server.config.ServerArg;
+import com.github.sofn.trpc.server.config.ServerArgs;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.server.ServerContext;
 import org.apache.thrift.server.TServerEventHandler;
@@ -12,16 +12,16 @@ import org.apache.thrift.transport.TTransport;
  * Version: 1.0  Created at 2016-09-25 21:36.
  */
 public class TrpcRegistryEventHandler implements TServerEventHandler {
-    private ServerArg serverArg;
+    private ServerArgs serverArgs;
 
-    public TrpcRegistryEventHandler(ServerArg serverArg) {
-        this.serverArg = serverArg;
+    public TrpcRegistryEventHandler(ServerArgs serverArgs) {
+        this.serverArgs = serverArgs;
     }
 
     @Override
     public void preServe() {
-        for (IRegistry registry : serverArg.getRegistrys()) {
-            registry.registry(serverArg.getRegistryConfig());
+        for (IRegistry registry : serverArgs.getRegistrys()) {
+            registry.registry(serverArgs.getRegistryConfig());
         }
     }
 
