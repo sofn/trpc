@@ -1,6 +1,6 @@
 package com.github.sofn.trpc.client;
 
-import com.github.sofn.trpc.core.IMonitor;
+import com.github.sofn.trpc.core.AbstractMonitor;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class ClientProxy {
     private String localAppKey;
     private String remoteAppKey;
     private String hostPorts;
-    private List<IMonitor> monitors;
+    private List<AbstractMonitor> monitors;
 
     @SuppressWarnings("unchecked")
     public static <T extends TServiceClient> TServiceClient client(Class<T> clazz) {

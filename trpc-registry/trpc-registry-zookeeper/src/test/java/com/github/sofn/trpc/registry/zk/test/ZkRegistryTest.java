@@ -4,7 +4,7 @@ import com.github.sofn.trpc.core.config.ServiceArgs;
 import com.github.sofn.trpc.core.utils.ClassNameUtils;
 import com.github.sofn.trpc.demo.Hello;
 import com.github.sofn.trpc.direct.HelloServer;
-import com.github.sofn.trpc.registry.zk.ZKRegistry;
+import com.github.sofn.trpc.registry.zk.ZkRegistry;
 import com.github.sofn.trpc.server.config.ServerArgs;
 import org.junit.Test;
 
@@ -15,11 +15,11 @@ import java.util.concurrent.TimeUnit;
  * Authors: sofn
  * Version: 1.0  Created at 2016-09-18 23:14.
  */
-public class ZKRegistryTest {
+public class ZkRegistryTest {
 
     @Test
     public void test() throws UnknownHostException, InterruptedException {
-        ZKRegistry registry = new ZKRegistry();
+        ZkRegistry registry = new ZkRegistry();
         registry.setConnectString("localhost:2181");
         registry.setSessionTimeout(100);
         registry.setConnectionTimeout(1000);

@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Data
 @Slf4j
-public class ZKRegistry implements IRegistry {
+public class ZkRegistry implements IRegistry {
     public static final String registry = "zookeeper";
     private String connectString;
     private int sessionTimeout;
