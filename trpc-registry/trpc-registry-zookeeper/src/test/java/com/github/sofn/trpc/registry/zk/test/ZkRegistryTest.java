@@ -17,26 +17,26 @@ import java.util.concurrent.TimeUnit;
  */
 public class ZkRegistryTest {
 
-    @Test
-    public void test() throws UnknownHostException, InterruptedException {
+    public void startZkRegistry(String zkConn, String appKey, String host, int port) {
         ZkRegistry registry = new ZkRegistry();
-        registry.setConnectString("localhost:2181");
+        registry.setConnectString(zkConn);
         registry.setSessionTimeout(100);
         registry.setConnectionTimeout(1000);
-
         registry.initConnect();
-
         ServerArgs arg = ServerArgs.builder()
-                .appkey("test")
-                .port(8080)
-                .host("127.0.0.1")
-                .hostName("localhost")
+                .appkey(appKey)
+                .port(port)
+                .host(host)
                 .weight(80)
                 .service(new ServiceArgs(new Hello.Processor<>(new HelloServer()), ClassNameUtils.getClassName(Hello.class), 80, 100))
                 .build();
         arg.afterPropertiesSet();
-
         registry.registry(arg.getRegistryConfig());
+    }
+
+    @Test
+    public void test() throws UnknownHostException, InterruptedException {
+        startZkRegistry("localhost:2181", "test", "127.0.0.1", 8080);
         TimeUnit.SECONDS.sleep(3);
     }
 

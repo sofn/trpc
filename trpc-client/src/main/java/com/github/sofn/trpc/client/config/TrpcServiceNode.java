@@ -11,7 +11,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class TrpcServiceNode {
     private String host;
-    private int port ;
+    private int port;
     private int weight;
     private int timeout;
 }
