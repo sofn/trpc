@@ -59,7 +59,7 @@ public class ZkMonitor extends AbstractMonitor {
                     (client1, event) -> {
                         switch (event.getType()) {
                             case CHILD_ADDED:
-                                monitorAble.addServer(nodeName2ServerInfo(event.getData().getPath()));
+                                monitorAble.addServer(nodeName2ServerInfo(event.getData().getPath()), RegistryConfig.parse(new String(event.getData().getData())));
                                 log.info("CHILD_ADDED: " + event.getData().getPath());
                                 break;
                             case CHILD_REMOVED:
@@ -67,7 +67,7 @@ public class ZkMonitor extends AbstractMonitor {
                                 log.info("CHILD_REMOVED: " + event.getData().getPath());
                                 break;
                             case CHILD_UPDATED:
-                                String newData = event.getData().getStat().toString();
+                                String newData = new String(event.getData().getData());
                                 monitorAble.updateServer(nodeName2ServerInfo(event.getData().getPath()), RegistryConfig.parse(newData));
                                 log.info("CHILD_UPDATED: " + event.getData().getPath());
                                 break;

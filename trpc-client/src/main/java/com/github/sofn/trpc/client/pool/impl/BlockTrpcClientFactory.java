@@ -36,7 +36,7 @@ public class BlockTrpcClientFactory implements KeyedPooledObjectFactory<ThriftSe
         BlockTrpcClient client = p.getObject();
         if (client != null && client.isOpen()) {
             client.close();
-            log.trace("close thrift connection:{}", info);
+            log.trace("unRegistry thrift connection:{}", info);
         }
     }
 

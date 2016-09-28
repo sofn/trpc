@@ -11,9 +11,9 @@ import java.util.Observable;
  */
 public abstract class MonitorAble extends Observable {
 
-    public abstract void removeServer(ThriftServerInfo serverInfo);
+    public abstract void addServer(ThriftServerInfo serverInfo, RegistryConfig config);
 
-    public abstract void addServer(ThriftServerInfo serverInfo);
+    public abstract void removeServer(ThriftServerInfo serverInfo);
 
     public abstract void updateServer(ThriftServerInfo serverInfo, RegistryConfig string);
 }

@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ZkRegistryTest {
 
-    public void startZkRegistry(String zkConn, String appKey, String host, int port) {
+    public ZkRegistry startZkRegistry(String zkConn, String appKey, String host, int port) {
         ZkRegistry registry = new ZkRegistry();
         registry.setConnectString(zkConn);
         registry.setSessionTimeout(100);
@@ -32,6 +32,7 @@ public class ZkRegistryTest {
                 .build();
         arg.afterPropertiesSet();
         registry.registry(arg.getRegistryConfig());
+        return registry;
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.github.sofn.trpc.core.config.RegistryConfig;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import com.github.sofn.trpc.core.monitor.MonitorAble;
 import com.github.sofn.trpc.registry.zk.ZkMonitor;
+import com.github.sofn.trpc.registry.zk.ZkRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -32,13 +33,13 @@ public class ZkMonitorTest {
         monitor.setConnectionTimeout(1000);
         List<RegistryConfig> registryConfigs = monitor.monitorRemoteKey(appKey, new MonitorAble() {
             @Override
-            public void removeServer(ThriftServerInfo serverInfo) {
-                log.info("monitorRemoteKey removeServer receive: " + serverInfo);
+            public void addServer(ThriftServerInfo serverInfo, RegistryConfig config) {
+                log.info("monitorRemoteKey addServer receive: " + serverInfo + " value: " + config.toJsonString());
             }
 
             @Override
-            public void addServer(ThriftServerInfo serverInfo) {
-                log.info("monitorRemoteKey addServer receive: " + serverInfo);
+            public void removeServer(ThriftServerInfo serverInfo) {
+                log.info("monitorRemoteKey removeServer receive: " + serverInfo);
             }
 
             @Override
@@ -47,7 +48,10 @@ public class ZkMonitorTest {
             }
         });
         TimeUnit.MILLISECONDS.sleep(10);
-        registry.startZkRegistry(zkconnStr, appKey, "127.0.0.1", 8001);
+        ZkRegistry zkRegistry = registry.startZkRegistry(zkconnStr, appKey, "127.0.0.1", 8001);
+        TimeUnit.MILLISECONDS.sleep(10);
+        zkRegistry.unRegistry(appKey, new ThriftServerInfo("127.0.0.1", 8001));
+
         System.out.println(registryConfigs.size());
         registryConfigs.stream().map(RegistryConfig::toJsonString).forEach(System.out::println);
 

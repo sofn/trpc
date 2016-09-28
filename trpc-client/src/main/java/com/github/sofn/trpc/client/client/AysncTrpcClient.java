@@ -50,10 +50,10 @@ public class AysncTrpcClient extends AbstractTrpcClient<TAsyncClient> {
     @Override
     public void close() {
         if (this.transport != null && this.transport.isOpen()) {
-            log.info("close client: " + serverInfo);
+            log.info("unRegistry client: " + serverInfo);
             this.transport.close();
         } else {
-            log.warn("try to close not open client: " + serverInfo);
+            log.warn("try to unRegistry not open client: " + serverInfo);
         }
     }
 

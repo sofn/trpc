@@ -1,6 +1,7 @@
 package com.github.sofn.trpc.core;
 
 import com.github.sofn.trpc.core.config.RegistryConfig;
+import com.github.sofn.trpc.core.config.ThriftServerInfo;
 
 /**
  * Authors: sofn
@@ -16,6 +17,5 @@ public interface IRegistry {
     /**
      * 取消注册
      */
-    boolean destory();
-
+    boolean unRegistry(String appKey, ThriftServerInfo serverInfo);
 }
