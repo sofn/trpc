@@ -1,5 +1,6 @@
 package com.github.sofn.trpc.client;
 
+import com.github.sofn.trpc.client.config.ClientArgs;
 import com.github.sofn.trpc.core.AbstractMonitor;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
@@ -14,11 +15,8 @@ import java.util.List;
  * @version 1.0 Created at: 2016-09-19 16:05
  */
 @Data
-public class ClientProxy {
-    private String localAppKey;
-    private String remoteAppKey;
-    private String hostPorts;
-    private List<AbstractMonitor> monitors;
+public class TrpcClientProxy {
+    private ClientArgs args;
 
     @SuppressWarnings("unchecked")
     public static <T extends TServiceClient> TServiceClient client(Class<T> clazz) {

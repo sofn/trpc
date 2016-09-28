@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author lishaofeng
+ * @author sofn
  * @version 1.0 Created at: 2016-09-26 14:38
  */
 @Slf4j
@@ -52,6 +52,7 @@ public class ZkMonitor extends AbstractMonitor {
         return client;
     }
 
+    @Override
     public List<RegistryConfig> monitorRemoteKey(String remoteKey, MonitorAble monitorAble) {
         try {
             final PathChildrenCache childrenCache = new PathChildrenCache(getClient(), ZkConstant.SERVICES_DIR + remoteKey, true);
