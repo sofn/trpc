@@ -3,6 +3,7 @@ package com.github.sofn.trpc.registry.zk;
 import com.github.sofn.trpc.core.IRegistry;
 import com.github.sofn.trpc.core.config.RegistryConfig;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
+import com.github.sofn.trpc.core.exception.TRpcRegistryException;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -51,25 +52,57 @@ public class ZkRegistry implements IRegistry {
         registryConfig.setRegistry(registry);
         try {
             String nodeName = registryConfig.getServerInfo().toString();
+            Map<String, PersistentNode> appKeyServers = nodeNames.computeIfAbsent(registryConfig.getAppKey(), (key) -> new ConcurrentHashMap<>());
+            if (appKeyServers.get(nodeName) != null) {
+                log.error("server registry exists: " + nodeName);
+                throw new TRpcRegistryException("server registry exists for key：" + nodeName);
+            }
             String nodeValue = registryConfig.toJsonString();
             PersistentNode node = new PersistentNode(client, CreateMode.EPHEMERAL, true, ZkConstant.SERVICES_DIR + registryConfig.getAppKey() + "/" + nodeName, nodeValue.getBytes());
             node.start();
             node.waitForInitialCreate(3, TimeUnit.SECONDS);
-            nodeNames.computeIfAbsent(registryConfig.getAppKey(), (key) -> new ConcurrentHashMap<>()).put(nodeName, node);
+            appKeyServers.put(nodeName, node);
             String actualPath = node.getActualPath();
             log.info("registry to zookeeper, node: " + actualPath + " value: " + nodeValue);
         } catch (Exception e) {
-            log.error("registry error", e);
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            } else {
+                log.error("registry error", e);
+            }
+        }
+    }
+
+    @Override
+    public void modify(RegistryConfig registryConfig) {
+        registryConfig.setRegistry(registry);
+        try {
+            String nodeName = registryConfig.getServerInfo().toString();
+            Map<String, PersistentNode> appKeyServers = nodeNames.computeIfAbsent(registryConfig.getAppKey(), (key) -> new ConcurrentHashMap<>());
+            PersistentNode node = appKeyServers.get(nodeName);
+            if (node == null) {
+                log.warn("server registry not exists " + nodeName + " try to registry");
+                registry(registryConfig);
+                return;
+            }
+            String nodeValue = registryConfig.toJsonString();
+            node.setData(nodeValue.getBytes());
+            String actualPath = node.getActualPath();
+            log.info("zookeeper modify, node: " + actualPath + " value: " + nodeValue);
+        } catch (Exception e) {
+            log.error("modify error", e);
         }
     }
 
     @Override
     public boolean unRegistry(String appKey, ThriftServerInfo serverInfo) {
         try {
-            PersistentNode node = nodeNames.computeIfAbsent(appKey, (key) -> new ConcurrentHashMap<>()).get(serverInfo.toString());
+            Map<String, PersistentNode> appKeyServers = nodeNames.computeIfAbsent(appKey, (key) -> new ConcurrentHashMap<>());
+            PersistentNode node = appKeyServers.get(serverInfo.toString());
             if (node != null) {
                 log.info("unRegistry " + serverInfo + " actualPath: " + node.getActualPath());
                 node.close();
+                appKeyServers.remove(serverInfo.toString());
                 return true;
             } else {
                 log.warn("unRegistry " + serverInfo + " node not found");

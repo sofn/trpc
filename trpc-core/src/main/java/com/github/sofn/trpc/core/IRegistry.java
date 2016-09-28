@@ -14,6 +14,8 @@ public interface IRegistry {
      */
     void registry(RegistryConfig registryConfig);
 
+    void modify(RegistryConfig registryConfig);
+
     /**
      * 取消注册
      */

@@ -7,6 +7,7 @@ import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import com.github.sofn.trpc.core.utils.NetUtils;
 import com.github.sofn.trpc.core.utils.ValidationUtils;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Singular;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
  * Authors: sofn
  * Version: 1.0  Created at 2016-09-25 16:28.
  */
-@Getter
+@Data
 @Builder
 public class ServerArgs {
     @Singular

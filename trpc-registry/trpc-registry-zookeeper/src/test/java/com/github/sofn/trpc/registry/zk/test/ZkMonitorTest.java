@@ -5,6 +5,7 @@ import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import com.github.sofn.trpc.core.monitor.MonitorAble;
 import com.github.sofn.trpc.registry.zk.ZkMonitor;
 import com.github.sofn.trpc.registry.zk.ZkRegistry;
+import com.github.sofn.trpc.server.config.ServerArgs;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -22,8 +23,8 @@ public class ZkMonitorTest {
 
     @Test
     public void test01() throws InterruptedException {
-        ZkRegistryTest registry = new ZkRegistryTest();
-        registry.startZkRegistry(zkconnStr, appKey, "127.0.0.1", 8000);
+        ZkRegistryTest registryTest = new ZkRegistryTest();
+        registryTest.startZkRegistry(zkconnStr, appKey, "127.0.0.1", 8000);
 
         TimeUnit.MILLISECONDS.sleep(20);
 
@@ -48,7 +49,11 @@ public class ZkMonitorTest {
             }
         });
         TimeUnit.MILLISECONDS.sleep(10);
-        ZkRegistry zkRegistry = registry.startZkRegistry(zkconnStr, appKey, "127.0.0.1", 8001);
+        ZkRegistry zkRegistry = registryTest.startZkRegistry(zkconnStr, appKey, "127.0.0.1", 8001);
+        TimeUnit.MILLISECONDS.sleep(10);
+        ServerArgs oldArgs = registryTest.getServerArgs(appKey, "127.0.0.1", 8001);
+        oldArgs.setWeight(60);
+        zkRegistry.modify(oldArgs.getRegistryConfig());
         TimeUnit.MILLISECONDS.sleep(10);
         zkRegistry.unRegistry(appKey, new ThriftServerInfo("127.0.0.1", 8001));
 
