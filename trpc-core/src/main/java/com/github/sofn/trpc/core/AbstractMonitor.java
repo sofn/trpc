@@ -1,7 +1,7 @@
 package com.github.sofn.trpc.core;
 
 import com.github.sofn.trpc.core.config.RegistryConfig;
-import com.github.sofn.trpc.core.monitor.MonitorAble;
+import com.github.sofn.trpc.core.monitor.RegistryConfigListener;
 
 import java.util.List;
 
@@ -11,6 +11,12 @@ import java.util.List;
  */
 public abstract class AbstractMonitor {
 
+    /**
+     * 返回remoteKey下所有节点数据，并监控变化
+     *
+     * @param monitor 消息listener
+     * @return 返回现在的数据
+     */
+    public abstract List<RegistryConfig> monitorRemoteKey(RegistryConfigListener monitor);
 
-    public abstract List<RegistryConfig> monitorRemoteKey(String remoteKey, MonitorAble monitorAble);
 }

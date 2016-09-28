@@ -2,7 +2,7 @@ package com.github.sofn.trpc.registry.zk.test;
 
 import com.github.sofn.trpc.core.config.RegistryConfig;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
-import com.github.sofn.trpc.core.monitor.MonitorAble;
+import com.github.sofn.trpc.core.monitor.RegistryConfigListener;
 import com.github.sofn.trpc.registry.zk.ZkMonitor;
 import com.github.sofn.trpc.registry.zk.ZkRegistry;
 import com.github.sofn.trpc.server.config.ServerArgs;
@@ -32,7 +32,7 @@ public class ZkMonitorTest {
         monitor.setConnectString(zkconnStr);
         monitor.setSessionTimeout(100);
         monitor.setConnectionTimeout(1000);
-        List<RegistryConfig> registryConfigs = monitor.monitorRemoteKey(appKey, new MonitorAble() {
+        List<RegistryConfig> registryConfigs = monitor.monitorRemoteKey(new RegistryConfigListener(appKey) {
             @Override
             public void addServer(ThriftServerInfo serverInfo, RegistryConfig config) {
                 log.info("monitorRemoteKey addServer receive: " + serverInfo + " value: " + config.toJsonString());

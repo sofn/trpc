@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @Getter
 @Builder
+@EqualsAndHashCode(of = {"serverInfo", "appKey"}, callSuper = false)
 public class RegistryConfig extends AbstractConfig {
     @Singular
     private List<ServiceConfig> servers = Collections.emptyList();

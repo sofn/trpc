@@ -3,9 +3,10 @@ package com.github.sofn.trpc.client.monitor;
 import com.github.sofn.trpc.core.AbstractMonitor;
 import com.github.sofn.trpc.core.config.RegistryConfig;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
-import com.github.sofn.trpc.core.monitor.MonitorAble;
 import com.google.common.collect.Lists;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,46 +16,38 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version 1.0 Created at: 2016-09-26 13:15
  */
 public class RegistryConfigFactory {
-    public static Map<String, List<RegistryConfig>> configs = new ConcurrentHashMap<>();
+    private static Map<String, Map<ThriftServerInfo, RegistryConfig>> configs = new ConcurrentHashMap<>(); //某个appKey下的所有配置
 
-    public List<RegistryConfig> getNodes(final String remoteKey, AbstractMonitor monitor) {
+    public Collection<RegistryConfig> getNodes(final String remoteKey, AbstractMonitor monitor) {
         return getNodes(remoteKey, Lists.newArrayList(monitor));
     }
 
     /**
      * 获取节点同时监控
      */
-    public List<RegistryConfig> getNodes(final String remoteKey, List<AbstractMonitor> monitors) {
+    public Collection<RegistryConfig> getNodes(final String remoteKey, List<AbstractMonitor> monitors) {
         if (configs.get(remoteKey) == null) {
             synchronized (this) {
                 if (configs.get(remoteKey) == null) {
-                    List<RegistryConfig> result = Lists.newArrayList();
+                    Map<ThriftServerInfo, RegistryConfig> result = new ConcurrentHashMap<>();
                     monitors.forEach(monitor -> {
-                        result.addAll(monitor.monitorRemoteKey(remoteKey, new ConfigMonitor()));
+                        List<RegistryConfig> registryConfigs = monitor.monitorRemoteKey(null);
+                        registryConfigs.forEach(config -> result.put(config.getServerInfo(), config));
                     });
                     configs.putIfAbsent(remoteKey, result);
-                    return result;
+                    return result.values();
                 }
             }
         }
-        return null;
+        return Collections.emptyList();
     }
 
-    private class ConfigMonitor extends MonitorAble {
-        @Override
-        public void addServer(ThriftServerInfo serverInfo, RegistryConfig config) {
+    private static Map<ThriftServerInfo, RegistryConfig> getRegistryConfigsMap(String remoteKey) {
+        return RegistryConfigFactory.configs.computeIfAbsent(remoteKey, key -> new ConcurrentHashMap<>());
+    }
 
-        }
-
-        @Override
-        public void removeServer(ThriftServerInfo serverInfo) {
-
-        }
-
-        @Override
-        public void updateServer(ThriftServerInfo serverInfo, RegistryConfig string) {
-
-        }
+    private static Collection<RegistryConfig> getRegistryConfigs(String remoteKey) {
+        return getRegistryConfigsMap(remoteKey).values();
     }
 
 }

@@ -3,7 +3,7 @@ package com.github.sofn.trpc.registry.zk;
 import com.github.sofn.trpc.core.AbstractMonitor;
 import com.github.sofn.trpc.core.config.RegistryConfig;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
-import com.github.sofn.trpc.core.monitor.MonitorAble;
+import com.github.sofn.trpc.core.monitor.RegistryConfigListener;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -53,23 +53,23 @@ public class ZkMonitor extends AbstractMonitor {
     }
 
     @Override
-    public List<RegistryConfig> monitorRemoteKey(String remoteKey, MonitorAble monitorAble) {
+    public List<RegistryConfig> monitorRemoteKey(RegistryConfigListener listener) {
         try {
-            final PathChildrenCache childrenCache = new PathChildrenCache(getClient(), ZkConstant.SERVICES_DIR + remoteKey, true);
+            final PathChildrenCache childrenCache = new PathChildrenCache(getClient(), ZkConstant.SERVICES_DIR + listener.getRemoteKey(), true);
             childrenCache.getListenable().addListener(
                     (client1, event) -> {
                         switch (event.getType()) {
                             case CHILD_ADDED:
-                                monitorAble.addServer(nodeName2ServerInfo(event.getData().getPath()), RegistryConfig.parse(new String(event.getData().getData())));
+                                listener.addServer(nodeName2ServerInfo(event.getData().getPath()), RegistryConfig.parse(new String(event.getData().getData())));
                                 log.info("CHILD_ADDED: " + event.getData().getPath());
                                 break;
                             case CHILD_REMOVED:
-                                monitorAble.removeServer(nodeName2ServerInfo(event.getData().getPath()));
+                                listener.removeServer(nodeName2ServerInfo(event.getData().getPath()));
                                 log.info("CHILD_REMOVED: " + event.getData().getPath());
                                 break;
                             case CHILD_UPDATED:
                                 String newData = new String(event.getData().getData());
-                                monitorAble.updateServer(nodeName2ServerInfo(event.getData().getPath()), RegistryConfig.parse(newData));
+                                listener.updateServer(nodeName2ServerInfo(event.getData().getPath()), RegistryConfig.parse(newData));
                                 log.info("CHILD_UPDATED: " + event.getData().getPath());
                                 break;
                             default:
