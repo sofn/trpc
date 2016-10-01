@@ -14,9 +14,9 @@ import lombok.Getter;
 public abstract class RegistryConfigListener {
     private String remoteKey;
 
-    public abstract void addServer(ThriftServerInfo serverInfo, RegistryConfig config);
+    public abstract void addServer(RegistryConfig config);
 
     public abstract void removeServer(ThriftServerInfo serverInfo);
 
-    public abstract void updateServer(ThriftServerInfo serverInfo, RegistryConfig config);
+    public abstract void updateServer(RegistryConfig config);
 }

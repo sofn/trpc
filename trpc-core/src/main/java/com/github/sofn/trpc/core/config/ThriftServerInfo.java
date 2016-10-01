@@ -2,6 +2,7 @@ package com.github.sofn.trpc.core.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.math.NumberUtils;
  */
 @Data
 @AllArgsConstructor
+@EqualsAndHashCode
 public class ThriftServerInfo {
     private String host;
     private int port;

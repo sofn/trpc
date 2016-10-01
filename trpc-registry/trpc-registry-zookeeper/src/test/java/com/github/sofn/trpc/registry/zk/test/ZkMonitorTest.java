@@ -34,8 +34,8 @@ public class ZkMonitorTest {
         monitor.setConnectionTimeout(1000);
         List<RegistryConfig> registryConfigs = monitor.monitorRemoteKey(new RegistryConfigListener(appKey) {
             @Override
-            public void addServer(ThriftServerInfo serverInfo, RegistryConfig config) {
-                log.info("monitorRemoteKey addServer receive: " + serverInfo + " value: " + config.toJsonString());
+            public void addServer(RegistryConfig config) {
+                log.info("monitorRemoteKey addServer value: " + config.toJsonString());
             }
 
             @Override
@@ -44,8 +44,8 @@ public class ZkMonitorTest {
             }
 
             @Override
-            public void updateServer(ThriftServerInfo serverInfo, RegistryConfig config) {
-                log.info("monitorRemoteKey updateServer receive: " + serverInfo + " config: " + config.toJsonString());
+            public void updateServer(RegistryConfig config) {
+                log.info("monitorRemoteKey updateServer value: " + config.toJsonString());
             }
         });
         TimeUnit.MILLISECONDS.sleep(10);
