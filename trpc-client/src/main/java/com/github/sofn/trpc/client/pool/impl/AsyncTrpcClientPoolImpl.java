@@ -15,6 +15,14 @@ public class AsyncTrpcClientPoolImpl implements TrpcClientPoolProvider<AysncTrpc
 
     private Map<ThriftServerInfo, AysncTrpcClient> cache = new ConcurrentHashMap<>();
 
+    private static class AsyncTrpcClientPoolImplHolder {
+        private static final AsyncTrpcClientPoolImpl INSTANCE = new AsyncTrpcClientPoolImpl();
+    }
+
+    public static AsyncTrpcClientPoolImpl getInstance() {
+        return AsyncTrpcClientPoolImplHolder.INSTANCE;
+    }
+
 
     @Override
     public AysncTrpcClient getConnection(ThriftServerInfo thriftServerInfo) {

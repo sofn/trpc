@@ -1,6 +1,5 @@
 package com.github.sofn.trpc.client.config;
 
-import com.github.sofn.trpc.client.client.AbstractTrpcClient;
 import com.github.sofn.trpc.client.loadbalance.AbstractLoadBalance;
 import com.github.sofn.trpc.client.loadbalance.RandomLoadBalance;
 import com.github.sofn.trpc.client.pool.TrpcClientPoolProvider;
@@ -17,11 +16,22 @@ import java.util.List;
 @Data
 @Builder
 public class ClientArgs {
-    private TrpcClientPoolProvider<AbstractTrpcClient> poolProvider;
+    private TrpcClientPoolProvider poolProvider;
     private List<AbstractMonitor> monitors;
-    private AbstractLoadBalance loadBalance = new RandomLoadBalance();
+    private volatile AbstractLoadBalance loadBalance;
     private String serviceInterface;
     private String localAppKey;
     private String remoteAppKey;
     private int timeout;
+
+    public AbstractLoadBalance getLoadBalance() {
+        if (this.loadBalance == null) {
+            synchronized (this) {
+                if (this.loadBalance == null) {
+                    this.loadBalance = new RandomLoadBalance();
+                }
+            }
+        }
+        return this.loadBalance;
+    }
 }

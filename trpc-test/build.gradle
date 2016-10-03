@@ -1,0 +1,6 @@
+dependencies {
+    testCompile project(":trpc-client")
+    testCompile project(":trpc-server")
+    testCompile project(":trpc-registry:trpc-registry-zookeeper")
+    testCompile project(':trpc-core').sourceSets.test.output
+}

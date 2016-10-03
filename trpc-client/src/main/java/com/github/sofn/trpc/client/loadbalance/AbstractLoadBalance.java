@@ -22,7 +22,7 @@ public abstract class AbstractLoadBalance {
     /**
      * 有序集合
      */
-    public List<TrpcServiceNode> getAllNodes(ServiceKey key, ClientArgs args) {
+    protected List<TrpcServiceNode> getAllNodes(ServiceKey key, ClientArgs args) {
         return ImmutableList.copyOf(ServiceFactory.getServiceKeys(key, args.getMonitors()));
     }
 }

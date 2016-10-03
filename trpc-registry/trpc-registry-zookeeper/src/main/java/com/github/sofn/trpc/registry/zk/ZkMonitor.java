@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 public class ZkMonitor extends AbstractMonitor {
 
     private String connectString;
-    private int sessionTimeout;
-    private int connectionTimeout;
+    private int sessionTimeout = 3000;
+    private int connectionTimeout = 100;
     private int retrySleepTime = 100;
     private int maxRetries = 3;
 

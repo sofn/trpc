@@ -8,7 +8,6 @@ import com.github.sofn.trpc.core.utils.NetUtils;
 import com.github.sofn.trpc.core.utils.ValidationUtils;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.Singular;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
@@ -45,6 +44,11 @@ public class ServerArgs {
     @Min(0)
     @Max(100)
     private int weight = 100;
+
+    public void setWeight(int weight) {
+        services.stream().filter(s -> s.getWeight() == this.weight).forEach(s -> s.setWeight(weight));
+        this.weight = weight;
+    }
 
     //对象创建完成后执行此方法
     public void afterPropertiesSet() {

@@ -6,13 +6,10 @@ import com.github.sofn.trpc.core.AbstractMonitor;
 import com.github.sofn.trpc.core.config.RegistryConfig;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import com.github.sofn.trpc.core.monitor.RegistryConfigListener;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -27,6 +24,10 @@ public class ServiceFactory {
     /**
      * 获取节点信息
      */
+    public static Set<TrpcServiceNode> getServiceKeys(ServiceKey serviceKey, AbstractMonitor monitor) {
+        return getServiceKeys(serviceKey, ImmutableList.of(monitor));
+    }
+
     public static Set<TrpcServiceNode> getServiceKeys(ServiceKey serviceKey, List<AbstractMonitor> monitors) {
         if (servicesMap.get(serviceKey) == null) {
             synchronized (ServiceFactory.class) {
@@ -42,7 +43,7 @@ public class ServiceFactory {
      * 开始监控
      */
     private static void startMonitor(final String remoteKey, List<AbstractMonitor> monitors) {
-        final Set<RegistryConfig> result = new ConcurrentSkipListSet<>();
+        final Set<RegistryConfig> result = new HashSet<>();
         monitors.forEach(monitor -> {
             List<RegistryConfig> registryConfigs = monitor.monitorRemoteKey(new RegistryConfigListenerImpl(remoteKey));
             result.addAll(new HashSet<>(registryConfigs));
@@ -54,7 +55,7 @@ public class ServiceFactory {
         config.getServers().forEach(service -> {
             //取出现有元素
             Set<TrpcServiceNode> nodes = servicesMap.computeIfAbsent(
-                    new ServiceKey(config.getKey(), service.getService()),
+                    new ServiceKey(config.getAppKey(), service.getService()),
                     serviceKey -> new ConcurrentSkipListSet<>()
             );
             //拼接
@@ -79,13 +80,14 @@ public class ServiceFactory {
 
         @Override
         public void removeServer(ThriftServerInfo serverInfo) {
-            List<ServiceKey> deleteKeys = Lists.newArrayList();
+            Map<ServiceKey, Set<TrpcServiceNode>> deleteNodes = new HashMap<>();
             servicesMap.forEach((k, set) -> set.forEach(v -> {
-                if (StringUtils.equals(v.getHost(), serverInfo.getHost()) && v.getPort() == v.getPort()) {
-                    deleteKeys.add(k);
+                if (StringUtils.equals(v.getHost(), serverInfo.getHost()) && v.getPort() == serverInfo.getPort()) {
+                    deleteNodes.computeIfAbsent(k, key -> new HashSet<>()).add(v);
                 }
             }));
-            deleteKeys.forEach(k -> servicesMap.remove(k));
+
+            deleteNodes.forEach((k, set) -> servicesMap.get(k).removeAll(set));
         }
 
         @Override

@@ -18,7 +18,6 @@ public class RandomLoadBalance extends AbstractLoadBalance {
     public TrpcServiceNode getNode(ServiceKey key, ClientArgs args) {
         List<TrpcServiceNode> allNodes = getAllNodes(key, args);
 
-
         int length = allNodes.size(); // 总个数
         int totalWeight = 0;          // 总权重
         boolean sameWeight = true;    // 权重是否都一样

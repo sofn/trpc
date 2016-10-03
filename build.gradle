@@ -29,6 +29,7 @@ subprojects {
             testCompile group: 'org.assertj', name: 'assertj-core', version: "${assertjVersion}"
             testCompile group: 'org.slf4j', name: 'slf4j-log4j12', version: "${slf4jVersion}"
             testCompile group: 'org.apache.logging.log4j', name: 'log4j-core', version: "${log4jVersion}"
+            testCompile group: 'org.mockito', name: 'mockito-core', version: "${mockitoVersion}"
         }
     }
 }
