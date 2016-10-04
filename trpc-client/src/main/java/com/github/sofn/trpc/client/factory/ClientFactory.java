@@ -8,8 +8,6 @@ import com.github.sofn.trpc.client.config.TrpcServiceNode;
 import com.github.sofn.trpc.client.pool.impl.AsyncTrpcClientPoolImpl;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.thrift.TServiceClient;
-import org.apache.thrift.async.TAsyncClient;
 
 /**
  * @author sofn

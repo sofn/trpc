@@ -12,11 +12,15 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.thrift.TServiceClient;
+import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.async.TAsyncClient;
 import org.apache.thrift.async.TAsyncClientManager;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.transport.TNonblockingTransport;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 
 /**
  * @author sofn
@@ -54,12 +58,12 @@ public class TrpcClientProxy {
                 } finally {
                     //将连接归还对象池
                     clientArgs.getPoolProvider().returnConnection(borrowClient.getKey(), borrowClient.getValue());
-                    System.out.println("call " + thisMethod.getName() + " " + success + " time: " + (System.currentTimeMillis() - startTime));
+                    log.info("call " + thisMethod.getName() + " " + success + " time: " + (System.currentTimeMillis() - startTime));
                 }
             });
             return t;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("proxy error", e);
         }
         return null;
     }
@@ -82,24 +86,38 @@ public class TrpcClientProxy {
             ((Proxy) t).setHandler((self, thisMethod, proceed, args) -> {
                 Pair<ThriftServerInfo, AysncTrpcClient> borrowClient = ClientFactory.getAsyncClient(clientArgs);
                 TAsyncClient client = borrowClient.getValue().getClient(clazz);
-                boolean success = false;
-                long startTime = System.currentTimeMillis();
                 try {
-                    Object result = thisMethod.invoke(client, args);
-                    success = true;
-                    return result;
+                    if (args.length > 0 && args[args.length - 1] instanceof AsyncMethodCallback) {
+                        //代理AsyncMethodCallback用于统计时间
+                        args[args.length - 1] = java.lang.reflect.Proxy.newProxyInstance(AsyncMethodCallback.class.getClassLoader(),
+                                new Class[]{AsyncMethodCallback.class},
+                                new AsyncMethodCallbackProxy(args[args.length - 1]));
+                    }
+                    return thisMethod.invoke(client, args);
                 } finally {
                     //将连接归还对象池
                     clientArgs.getPoolProvider().returnConnection(borrowClient.getKey(), borrowClient.getValue());
-                    System.out.println("call " + thisMethod.getName() + " " + success + " time: " + (System.currentTimeMillis() - startTime));
                 }
             });
             return t;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("proxy error", e);
         }
         return null;
     }
 
+    private class AsyncMethodCallbackProxy implements InvocationHandler {
+        private Object proxied;
+        private long startTime = System.currentTimeMillis();
 
+        private AsyncMethodCallbackProxy(Object proxied) {
+            this.proxied = proxied;
+        }
+
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            Object result = method.invoke(proxied, args);
+            log.info("call " + method.getName() + " time: " + (System.currentTimeMillis() - startTime));
+            return result;
+        }
+    }
 }
