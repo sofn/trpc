@@ -16,11 +16,11 @@ public abstract class AbstractConfig implements Serializable {
     private static final long serialVersionUID = 4267533505537413570L;
     private static final Map<String, AtomicLong> counter = new ConcurrentHashMap<>();
 
-    protected final String key;
+    protected final String configKey;
     protected long id = -1;
 
-    protected AbstractConfig(String key) {
-        this.key = key;
+    protected AbstractConfig(String configKey) {
+        this.configKey = configKey;
     }
 
     private static long nextId(String key) {
@@ -29,7 +29,7 @@ public abstract class AbstractConfig implements Serializable {
 
     protected void fillId() {
         if (this.id < 0) {
-            this.id = nextId(key);
+            this.id = nextId(configKey);
         }
     }
 }

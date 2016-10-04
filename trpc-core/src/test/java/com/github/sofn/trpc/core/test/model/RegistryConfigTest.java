@@ -29,7 +29,7 @@ public class RegistryConfigTest {
 
     @Test
     public void test() {
-        assertThat(data.toJsonString()).isEqualTo("{\"key\":\"registry\",\"id\":0,\"servers\":[{\"key\":\"service\",\"id\":0,\"service\":\"aaa\",\"weight\":100,\"timeout\":100},{\"key\":\"service\",\"id\":1,\"service\":\"bbb\",\"weight\":100,\"timeout\":100}],\"serverInfo\":{\"host\":\"127.0.0.1\",\"port\":8080},\"appKey\":\"appKey\",\"registry\":\"zookeeper\",\"hostName\":\"localhost\",\"weight\":80}");
+        assertThat(data.toJsonString()).isEqualTo("{\"configKey\":\"registry\",\"id\":0,\"servers\":[{\"configKey\":\"service\",\"id\":0,\"service\":\"aaa\",\"weight\":100,\"timeout\":100},{\"configKey\":\"service\",\"id\":1,\"service\":\"bbb\",\"weight\":100,\"timeout\":100}],\"serverInfo\":{\"host\":\"127.0.0.1\",\"port\":8080},\"appKey\":\"appKey\",\"registry\":\"zookeeper\",\"hostName\":\"localhost\",\"weight\":80}");
 
         RegistryConfig data2 = RegistryConfig.parse(data.toJsonString());
         assertThat(data2).isNotNull();
