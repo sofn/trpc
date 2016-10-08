@@ -20,12 +20,12 @@ import java.nio.channels.UnresolvedAddressException;
  * @version 1.0 Created at: 2016-09-24 19:32
  */
 @Slf4j
-public class AysncTrpcClient extends AbstractTrpcClient<TAsyncClient> {
+public class AsyncTrpcClient extends AbstractTrpcClient<TAsyncClient> {
     private TNonblockingTransport transport;
     private TAsyncClientManager clientManager;
     private volatile boolean isOpen = true;
 
-    public AysncTrpcClient(ThriftServerInfo serverInfo) {
+    public AsyncTrpcClient(ThriftServerInfo serverInfo) {
         super(serverInfo);
     }
 
@@ -37,8 +37,8 @@ public class AysncTrpcClient extends AbstractTrpcClient<TAsyncClient> {
             //设置传输通道，调用非阻塞IO。
             this.transport = new TNonblockingSocket(this.serverInfo.getHost(), this.serverInfo.getPort(), 1000);
         } catch (Exception e) {
-            log.error("create AysncTrpcClient:" + this.serverInfo + " error", e);
-            throw new TRpcException("create AysncTrpcClient:" + this.serverInfo + " error", e);
+            log.error("create AsyncTrpcClient:" + this.serverInfo + " error", e);
+            throw new TRpcException("create AsyncTrpcClient:" + this.serverInfo + " error", e);
         }
     }
 

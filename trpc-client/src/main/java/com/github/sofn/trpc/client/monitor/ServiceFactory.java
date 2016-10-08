@@ -7,6 +7,7 @@ import com.github.sofn.trpc.core.config.RegistryConfig;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import com.github.sofn.trpc.core.monitor.RegistryConfigListener;
 import com.google.common.collect.ImmutableList;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -18,6 +19,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * Authors: sofn
  * Version: 1.0  Created at 2016-09-28 23:02.
  */
+@Slf4j
 public class ServiceFactory {
     private static Map<ServiceKey, Set<TrpcServiceNode>> servicesMap = new ConcurrentHashMap<>();
 
@@ -52,6 +54,7 @@ public class ServiceFactory {
     }
 
     private static void registry2ServiceMap(RegistryConfig config) {
+        log.info("registry2ServiceMap" + config);
         config.getServers().forEach(service -> {
             //取出现有元素
             Set<TrpcServiceNode> nodes = servicesMap.computeIfAbsent(

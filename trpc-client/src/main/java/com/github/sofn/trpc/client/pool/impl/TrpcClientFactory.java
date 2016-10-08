@@ -1,6 +1,6 @@
 package com.github.sofn.trpc.client.pool.impl;
 
-import com.github.sofn.trpc.client.client.BlockTrpcClient;
+import com.github.sofn.trpc.client.client.AbstractTrpcClient;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.KeyedPooledObjectFactory;
@@ -10,30 +10,32 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 import java.util.function.Function;
 
 /**
+ * AbstractTrpcClient 构建工程类
+ *
  * @author sofn
  * @version 1.0 Created at: 2016-09-20 11:55
  */
 @Slf4j
-public class BlockTrpcClientFactory implements KeyedPooledObjectFactory<ThriftServerInfo, BlockTrpcClient> {
+public class TrpcClientFactory<T extends AbstractTrpcClient> implements KeyedPooledObjectFactory<ThriftServerInfo, T> {
 
-    private final Function<ThriftServerInfo, BlockTrpcClient> transportProvider;
+    private final Function<ThriftServerInfo, T> transportProvider;
 
-    public BlockTrpcClientFactory(Function<ThriftServerInfo, BlockTrpcClient> transportProvider) {
+    public TrpcClientFactory(Function<ThriftServerInfo, T> transportProvider) {
         this.transportProvider = transportProvider;
     }
 
     @Override
-    public PooledObject<BlockTrpcClient> makeObject(ThriftServerInfo info) throws Exception {
-        BlockTrpcClient client = transportProvider.apply(info);
+    public PooledObject<T> makeObject(ThriftServerInfo info) throws Exception {
+        T client = transportProvider.apply(info);
         client.open();
-        DefaultPooledObject<BlockTrpcClient> result = new DefaultPooledObject<>(client);
+        DefaultPooledObject<T> result = new DefaultPooledObject<>(client);
         log.debug("make new ThriftClient:{}", info);
         return result;
     }
 
     @Override
-    public void destroyObject(ThriftServerInfo info, PooledObject<BlockTrpcClient> p) throws Exception {
-        BlockTrpcClient client = p.getObject();
+    public void destroyObject(ThriftServerInfo info, PooledObject<T> p) throws Exception {
+        T client = p.getObject();
         if (client != null && client.isOpen()) {
             client.close();
             log.trace("unRegistry thrift connection:{}", info);
@@ -41,7 +43,7 @@ public class BlockTrpcClientFactory implements KeyedPooledObjectFactory<ThriftSe
     }
 
     @Override
-    public boolean validateObject(ThriftServerInfo info, PooledObject<BlockTrpcClient> p) {
+    public boolean validateObject(ThriftServerInfo info, PooledObject<T> p) {
         try {
             return p.getObject().isOpen();
         } catch (Throwable e) {
@@ -51,13 +53,13 @@ public class BlockTrpcClientFactory implements KeyedPooledObjectFactory<ThriftSe
     }
 
     @Override
-    public void activateObject(ThriftServerInfo info, PooledObject<BlockTrpcClient> p)
+    public void activateObject(ThriftServerInfo info, PooledObject<T> p)
             throws Exception {
         // do nothing
     }
 
     @Override
-    public void passivateObject(ThriftServerInfo info, PooledObject<BlockTrpcClient> p)
+    public void passivateObject(ThriftServerInfo info, PooledObject<T> p)
             throws Exception {
         // do nothing
     }

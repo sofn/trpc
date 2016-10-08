@@ -1,9 +1,8 @@
 package com.github.sofn.trpc.client.test.pool;
 
-import com.github.sofn.trpc.client.client.AysncTrpcClient;
+import com.github.sofn.trpc.client.client.AsyncTrpcClient;
 import com.github.sofn.trpc.client.client.BlockTrpcClient;
-import com.github.sofn.trpc.client.pool.impl.AsyncTrpcClientPoolImpl;
-import com.github.sofn.trpc.client.pool.impl.BlockTrpcClientPoolImpl;
+import com.github.sofn.trpc.client.pool.impl.TrpcClientPoolImpl;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import com.github.sofn.trpc.demo.Hello;
 import com.github.sofn.trpc.direct.DemoServer;
@@ -29,16 +28,14 @@ public class TrpcClientPoolTest {
     private static final int MAX_CONN = 1000;
 
     private int port = 8888;
+    private GenericKeyedObjectPoolConfig config;
 
     @Before
     public void init() {
         this.port = RandomUtils.nextInt(10000, 20000);
         new DemoServer().startDaemon(this.port);
-    }
 
-    @Test
-    public void testBlockPool() throws TException {
-        GenericKeyedObjectPoolConfig config = new GenericKeyedObjectPoolConfig();
+        config = new GenericKeyedObjectPoolConfig();
         config.setMaxTotal(MAX_CONN);
         config.setMaxTotalPerKey(MAX_CONN);
         config.setMaxIdlePerKey(MAX_CONN);
@@ -47,11 +44,14 @@ public class TrpcClientPoolTest {
         config.setMinEvictableIdleTimeMillis(MINUTES.toMillis(1));
         config.setSoftMinEvictableIdleTimeMillis(MINUTES.toMillis(1));
         config.setJmxEnabled(false);
+    }
 
-        BlockTrpcClientPoolImpl clientPool = new BlockTrpcClientPoolImpl(config, BlockTrpcClient::new);
+    @Test
+    public void testBlockPool() throws TException {
+        TrpcClientPoolImpl clientPool = new TrpcClientPoolImpl(config);
 
         ThriftServerInfo serverInfo = new ThriftServerInfo("localhost", this.port);
-        BlockTrpcClient trpcClient = clientPool.getConnection(serverInfo);
+        BlockTrpcClient trpcClient = (BlockTrpcClient) clientPool.getConnection(serverInfo);
         assertThat(trpcClient.isOpen()).isTrue();
 
         Hello.Client client = trpcClient.getClient(Hello.Client.class);
@@ -60,9 +60,9 @@ public class TrpcClientPoolTest {
 
     @Test
     public void testAysncPool() throws TException, InterruptedException {
-        AsyncTrpcClientPoolImpl clientPool = new AsyncTrpcClientPoolImpl();
         ThriftServerInfo serverInfo = new ThriftServerInfo("localhost", this.port);
-        AysncTrpcClient trpcClient = clientPool.getConnection(serverInfo);
+        TrpcClientPoolImpl clientPool = new TrpcClientPoolImpl(config, true);
+        AsyncTrpcClient trpcClient = (AsyncTrpcClient) clientPool.getConnection(serverInfo);
         Hello.AsyncClient client = trpcClient.getClient(Hello.AsyncClient.class);
 
         CountDownLatch downLatch = new CountDownLatch(1);
