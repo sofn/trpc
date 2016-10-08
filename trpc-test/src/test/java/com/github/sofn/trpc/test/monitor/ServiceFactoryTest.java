@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class ServiceFactoryTest {
     private String zkconnStr = "localhost:2181";
-    private String appKey = "test";
+    private String appKey = "serviceFactoryTest";
 
     public ServerArgs getServerArgs(String appKey, String host, int port) {
         ServerArgs arg = ServerArgs.builder()

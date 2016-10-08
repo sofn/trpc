@@ -35,7 +35,7 @@ import static org.junit.Assert.fail;
 public class TrpcClientProxyTest {
     private static final int MIN_CONN = 1;
     private static final int MAX_CONN = 1000;
-    private static final String appKey = "test";
+    private static final String appKey = "proxytest";
     private static final String localAppKey = "clientkey";
 
     @Before
