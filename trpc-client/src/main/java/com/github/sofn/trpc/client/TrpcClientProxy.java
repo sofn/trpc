@@ -92,7 +92,7 @@ public class TrpcClientProxy {
             Object client = borrowClient.getValue().getClient(clazz);
             try {
                 if (args.length > 0 && args[args.length - 1] instanceof AsyncMethodCallback) {
-                    //代理AsyncMethodCallback用于统计时间
+                    //代理AsyncMethodCallback
                     args[args.length - 1] = java.lang.reflect.Proxy.newProxyInstance(AsyncMethodCallback.class.getClassLoader(),
                             new Class[]{AsyncMethodCallback.class},
                             new AsyncMethodCallbackProxy(args[args.length - 1], clientArgs, borrowClient));
