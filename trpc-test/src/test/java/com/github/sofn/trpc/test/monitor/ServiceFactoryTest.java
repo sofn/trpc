@@ -72,7 +72,7 @@ public class ServiceFactoryTest {
         //test update
         arg2.setWeight(70);
         registry.modify(arg2.getRegistryConfig());
-        TimeUnit.MILLISECONDS.sleep(10);
+        TimeUnit.MILLISECONDS.sleep(20);
         nodes = ServiceFactory.getServiceKeys(new ServiceKey(appKey, ClassNameUtils.getClassName(Hello.class)), zkMonitor);
         assertThat(nodes.size()).isEqualTo(2);
         nodes.forEach(System.out::println);
