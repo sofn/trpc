@@ -9,6 +9,7 @@ import com.github.sofn.trpc.registry.zk.ZkRegistry;
 import com.github.sofn.trpc.server.ThriftServerPublisher;
 import com.github.sofn.trpc.server.config.ServerArgs;
 import com.github.sofn.trpc.test.monitor.ServiceFactoryTest;
+import com.github.sofn.trpc.utils.NumUtil;
 import com.google.common.collect.ImmutableList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
@@ -21,7 +22,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * @author sofn
@@ -31,15 +32,16 @@ import static org.junit.Assert.fail;
 public class TrpcClientProxyTest {
     private static final int MIN_CONN = 1;
     private static final int MAX_CONN = 1000;
-    private static final String appKey = "proxytest";
     private static final String localAppKey = "clientkey";
+    private String appKey;
 
     private GenericKeyedObjectPoolConfig poolConfig;
 
     @Before
     public void init() throws InterruptedException {
+        this.appKey = "proxytest" + NumUtil.nextNum();
         ServiceFactoryTest serviceFactoryTest = new ServiceFactoryTest();
-        ServerArgs serverArgs = serviceFactoryTest.getServerArgs(appKey, "127.0.0.1", 8010);
+        ServerArgs serverArgs = serviceFactoryTest.getServerArgs(this.appKey, "127.0.0.1", NumUtil.nextPort());
         ZkRegistry zkRegistry = serviceFactoryTest.getZkRegistry();
         serverArgs.setRegistrys(ImmutableList.of(zkRegistry));
 
@@ -113,10 +115,10 @@ public class TrpcClientProxyTest {
         latch.await();
     }
 
-    public class ProxyTestCallBack implements AsyncMethodCallback<Hello.AsyncClient.hi_call> {
+    private class ProxyTestCallBack implements AsyncMethodCallback<Hello.AsyncClient.hi_call> {
         private CountDownLatch latch;
 
-        public ProxyTestCallBack(CountDownLatch latch) {
+        ProxyTestCallBack(CountDownLatch latch) {
             this.latch = latch;
         }
 

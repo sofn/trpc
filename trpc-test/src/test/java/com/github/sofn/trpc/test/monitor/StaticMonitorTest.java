@@ -6,6 +6,7 @@ import com.github.sofn.trpc.core.utils.ClassNameUtils;
 import com.github.sofn.trpc.demo.Hello;
 import com.github.sofn.trpc.server.ThriftServerPublisher;
 import com.github.sofn.trpc.server.config.ServerArgs;
+import com.github.sofn.trpc.utils.NumUtil;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 import org.apache.thrift.TException;
 import org.junit.Before;
@@ -27,11 +28,12 @@ public class StaticMonitorTest {
     private static final String localAppKey = "clientkey";
 
     private GenericKeyedObjectPoolConfig poolConfig;
+    private int port = NumUtil.nextPort();
 
     @Before
     public void init() throws InterruptedException {
         ServiceFactoryTest serviceFactoryTest = new ServiceFactoryTest();
-        ServerArgs serverArgs = serviceFactoryTest.getServerArgs(appKey, "127.0.0.1", 8011);
+        ServerArgs serverArgs = serviceFactoryTest.getServerArgs(appKey, "127.0.0.1", port);
 
         ThriftServerPublisher publisher = new ThriftServerPublisher(serverArgs);
         Thread thread = new Thread(publisher::init);
@@ -56,7 +58,7 @@ public class StaticMonitorTest {
                 .poolConfig(poolConfig)
                 .localAppKey(localAppKey)
                 .remoteAppKey(appKey)
-                .ipPorts("127.0.0.1:8011")
+                .ipPorts("127.0.0.1:" + port)
                 .serviceInterface(ClassNameUtils.getClassName(Hello.class))
                 .timeout(100)
                 .build();
