@@ -17,20 +17,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class ThriftServerInfo {
-    private String host;
+    private String ip;
     private int port;
 
     public ThriftServerInfo(String ipPort) {
         checkNotNull(ipPort);
         String[] splits = ipPort.split(":");
         checkArgument(splits.length == 2, "ipPort format error");
-        this.host = splits[0];
+        this.ip = splits[0];
         this.port = NumberUtils.toInt(splits[1]);
     }
 
     @Override
     public String toString() {
-        return host + ":" + port;
+        return ip + ":" + port;
     }
 
     public static ThriftServerInfo parse(String info) {

@@ -29,7 +29,7 @@ public class BlockTrpcClient extends AbstractTrpcClient<TServiceClient> {
     public void open() {
         TTransport transport;
 
-        transport = new TSocket(serverInfo.getHost(), serverInfo.getPort());
+        transport = new TSocket(serverInfo.getIp(), serverInfo.getPort());
         transport = new TFramedTransport(transport);
         try {
             transport.open();

@@ -85,7 +85,7 @@ public class ServiceFactory {
         public void removeServer(ThriftServerInfo serverInfo) {
             Map<ServiceKey, Set<TrpcServiceNode>> deleteNodes = new HashMap<>();
             servicesMap.forEach((k, set) -> set.forEach(v -> {
-                if (StringUtils.equals(v.getHost(), serverInfo.getHost()) && v.getPort() == serverInfo.getPort()) {
+                if (StringUtils.equals(v.getIp(), serverInfo.getIp()) && v.getPort() == serverInfo.getPort()) {
                     deleteNodes.computeIfAbsent(k, key -> new HashSet<>()).add(v);
                 }
             }));

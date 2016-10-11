@@ -32,7 +32,7 @@ public class StaticMonitor extends AbstractMonitor {
     public List<RegistryConfig> monitorRemoteKey(RegistryConfigListener monitor) {
         List<ServiceConfig> serviceConfigs = services.stream().map(s -> new ServiceConfig(s, 100)).collect(Collectors.toList());
         return servers.stream()
-                .map(s -> new RegistryConfig(serviceConfigs, s, appKey, "static", s.getHost(), 100))
+                .map(s -> new RegistryConfig(serviceConfigs, s, appKey, "static", s.getIp(), 100))
                 .collect(Collectors.toList());
     }
 

@@ -8,6 +8,7 @@ import com.github.sofn.trpc.direct.HelloServer;
 import com.github.sofn.trpc.registry.zk.ZkRegistry;
 import com.github.sofn.trpc.server.ThriftServerPublisher;
 import com.github.sofn.trpc.server.config.ServerArgs;
+import com.github.sofn.trpc.utils.NumUtil;
 import org.junit.Test;
 
 import java.net.UnknownHostException;
@@ -31,7 +32,7 @@ public class ThriftServerPublisherTest {
         ServerArgs arg = ServerArgs.builder()
                 .appkey("test")
                 .host("127.0.0.1")
-                .port(8888)
+                .port(NumUtil.nextPort())
                 .service(new ServiceArgs(new Hello.Processor<>(new HelloServer()), ClassNameUtils.getClassName(Hello.class), 80, 100))
                 .registry(registry)
                 .build();

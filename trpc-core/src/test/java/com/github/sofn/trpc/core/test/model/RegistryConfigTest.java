@@ -29,12 +29,12 @@ public class RegistryConfigTest {
 
     @Test
     public void test() {
-        assertThat(data.toJsonString()).isEqualTo("{\"configKey\":\"registry\",\"id\":0,\"servers\":[{\"configKey\":\"service\",\"id\":0,\"service\":\"aaa\",\"weight\":100,\"timeout\":100},{\"configKey\":\"service\",\"id\":1,\"service\":\"bbb\",\"weight\":100,\"timeout\":100}],\"serverInfo\":{\"host\":\"127.0.0.1\",\"port\":8080},\"appKey\":\"appKey\",\"registry\":\"zookeeper\",\"hostName\":\"localhost\",\"weight\":80}");
+        assertThat(data.toJsonString()).isEqualTo("{\"configKey\":\"registry\",\"id\":0,\"servers\":[{\"configKey\":\"service\",\"id\":0,\"service\":\"aaa\",\"weight\":100,\"timeout\":100},{\"configKey\":\"service\",\"id\":1,\"service\":\"bbb\",\"weight\":100,\"timeout\":100}],\"serverInfo\":{\"ip\":\"127.0.0.1\",\"port\":8080},\"appKey\":\"appKey\",\"registry\":\"zookeeper\",\"hostName\":\"localhost\",\"weight\":80}");
 
         RegistryConfig data2 = RegistryConfig.parse(data.toJsonString());
         assertThat(data2).isNotNull();
         assertThat(data2.getRegistry()).isEqualTo(data.getRegistry());
-        assertThat(data2.getServerInfo().getHost()).isEqualTo(data.getServerInfo().getHost());
+        assertThat(data2.getServerInfo().getIp()).isEqualTo(data.getServerInfo().getIp());
         assertThat(data2.getServerInfo().getPort()).isEqualTo(data.getServerInfo().getPort());
         assertThat(data2.getWeight()).isEqualTo(data.getWeight());
         assertThat(data2.getHostName()).isEqualTo(data.getHostName());

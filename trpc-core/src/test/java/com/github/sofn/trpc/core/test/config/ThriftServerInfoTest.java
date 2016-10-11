@@ -17,7 +17,7 @@ public class ThriftServerInfoTest {
         assertThat(info.toString()).isEqualTo("127.0.0.1:8888");
         ThriftServerInfo info2 = ThriftServerInfo.parse(info.toString());
         assertThat(info2).isNotNull();
-        assertThat(info2.getHost()).isEqualTo("127.0.0.1");
+        assertThat(info2.getIp()).isEqualTo("127.0.0.1");
         assertThat(info2.getPort()).isEqualTo(8888);
     }
 

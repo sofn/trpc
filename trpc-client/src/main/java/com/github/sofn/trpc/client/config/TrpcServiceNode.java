@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 @Getter
 @ToString
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"host", "port"})
+@EqualsAndHashCode(of = {"ip", "port"})
 public class TrpcServiceNode implements Comparable<TrpcServiceNode> {
-    private String host;
+    private String ip;
     private int port;
     private int weight;
     private int timeout;
@@ -27,17 +27,17 @@ public class TrpcServiceNode implements Comparable<TrpcServiceNode> {
     public static List<TrpcServiceNode> fromRegistryConfig(RegistryConfig registryConfig) {
         ThriftServerInfo server = registryConfig.getServerInfo();
         return registryConfig.getServers().stream()
-                .map(s -> new TrpcServiceNode(server.getHost(), server.getPort(), s.getWeight(), s.getTimeout()))
+                .map(s -> new TrpcServiceNode(server.getIp(), server.getPort(), s.getWeight(), s.getTimeout()))
                 .collect(Collectors.toList());
     }
 
     public ThriftServerInfo toThriftServerInfo() {
-        return new ThriftServerInfo(this.host, this.port);
+        return new ThriftServerInfo(this.ip, this.port);
     }
 
     @Override
     public int compareTo(TrpcServiceNode other) {
-        int result = this.host.compareTo(other.host);
+        int result = this.ip.compareTo(other.ip);
         return result != 0 ? result : this.port - other.port;
     }
 }

@@ -35,7 +35,7 @@ public class AsyncTrpcClient extends AbstractTrpcClient<TAsyncClient> {
             //异步调用管理器
             this.clientManager = new TAsyncClientManager();
             //设置传输通道，调用非阻塞IO。
-            this.transport = new TNonblockingSocket(this.serverInfo.getHost(), this.serverInfo.getPort(), 1000);
+            this.transport = new TNonblockingSocket(this.serverInfo.getIp(), this.serverInfo.getPort(), 1000);
         } catch (Exception e) {
             log.error("create AsyncTrpcClient:" + this.serverInfo + " error", e);
             throw new TRpcException("create AsyncTrpcClient:" + this.serverInfo + " error", e);
