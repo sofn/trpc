@@ -45,6 +45,7 @@ public class ThriftServerPublisherTest {
 
         TimeUnit.MILLISECONDS.sleep(20);
         DemoClient demoClient = new DemoClient();
+        demoClient.setPort(arg.getPort());
         demoClient.bioCall();
         demoClient.nioCall();
         publisher.stop();

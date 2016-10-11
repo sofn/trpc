@@ -1,6 +1,7 @@
 package com.github.sofn.trpc.direct;
 
 import com.github.sofn.trpc.demo.Hello;
+import com.github.sofn.trpc.utils.NumUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.thrift.TException;
@@ -16,17 +17,23 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.fail;
+
 /**
  * @author sofn
  * @version 1.0 Created at: 2016-09-23 19:09
  */
 @Slf4j
 public class DemoClient {
-    private int port = 8888;
+    private int port;
+
+    public void setPort(int port) {
+        this.port = port;
+    }
 
     @Before
     public void init() {
-        this.port = RandomUtils.nextInt(10000, 20000);
+        this.port = NumUtil.nextPort();
         new DemoServer().startDaemon(this.port);
     }
 
@@ -52,6 +59,7 @@ public class DemoClient {
                 public void onError(Exception exception) {
                     log.info("error： " + System.currentTimeMillis());
                     exception.printStackTrace();
+                    fail();
                 }
 
                 @Override
@@ -60,7 +68,7 @@ public class DemoClient {
                     try {
                         log.info(hi_call.getResult());
                     } catch (Exception e) {
-                        log.error("error", e);
+                        fail();
                     }
                 }
             });
@@ -68,6 +76,7 @@ public class DemoClient {
             TimeUnit.MILLISECONDS.sleep(100);
         } catch (Exception e) {
             log.error("error", e);
+            fail();
         }
 
     }
@@ -91,6 +100,7 @@ public class DemoClient {
             transport.close();
         } catch (TException x) {
             x.printStackTrace();
+            fail();
         }
     }
 
