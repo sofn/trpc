@@ -3,21 +3,17 @@ package com.github.sofn.trpc.direct;
 import com.github.sofn.trpc.demo.Hello;
 import com.github.sofn.trpc.utils.NumUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomUtils;
 import org.apache.thrift.TException;
 import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.async.TAsyncClientManager;
-import org.apache.thrift.protocol.TCompactProtocol;
-import org.apache.thrift.protocol.TMultiplexedProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.protocol.TProtocolFactory;
+import org.apache.thrift.protocol.*;
 import org.apache.thrift.transport.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * @author sofn
@@ -46,7 +42,7 @@ public class DemoClient {
             final TNonblockingTransport transport = new TNonblockingSocket("127.0.0.1", this.port, 1000);
             //设置协议
             TProtocolFactory protocolFactory = (TProtocolFactory) tTransport -> {
-                TProtocol protocol = new TCompactProtocol(tTransport);
+                TProtocol protocol = new TBinaryProtocol(tTransport);
                 return new TMultiplexedProtocol(protocol, Hello.class.getName());
             };
 
@@ -88,8 +84,8 @@ public class DemoClient {
             TTransport transport = new TFramedTransport(new TSocket("localhost", this.port));
             transport.open();
 
-            //使用高密度二进制协议
-            TProtocol protocol = new TCompactProtocol(transport);
+            //使用二进制协议
+            TProtocol protocol = new TBinaryProtocol(transport);
 
             TMultiplexedProtocol mp2 = new TMultiplexedProtocol(protocol, Hello.class.getName());
             Hello.Client helloClient2 = new Hello.Client(mp2);

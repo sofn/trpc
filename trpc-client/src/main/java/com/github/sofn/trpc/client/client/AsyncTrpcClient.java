@@ -6,7 +6,7 @@ import com.github.sofn.trpc.core.utils.ClassNameUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.async.TAsyncClient;
 import org.apache.thrift.async.TAsyncClientManager;
-import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TMultiplexedProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
@@ -62,7 +62,7 @@ public class AsyncTrpcClient extends AbstractTrpcClient<TAsyncClient> {
     public <X extends TAsyncClient> X getClient(final Class<X> clazz) {
         return (X) super.clients.computeIfAbsent(ClassNameUtils.getOuterClassName(clazz), (className) -> {
             TProtocolFactory protocolFactory = (TProtocolFactory) tTransport -> {
-                TProtocol protocol = new TCompactProtocol(tTransport);
+                TProtocol protocol = new TBinaryProtocol(tTransport);
                 return new TMultiplexedProtocol(protocol, className);
             };
             try {

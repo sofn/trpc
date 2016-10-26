@@ -1,9 +1,6 @@
 package com.github.sofn.trpc.client.client;
 
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

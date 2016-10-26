@@ -4,7 +4,7 @@ import com.github.sofn.trpc.core.utils.ClassNameUtils;
 import com.github.sofn.trpc.demo.Hello;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TMultiplexedProcessor;
-import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadedSelectorServer;
@@ -28,7 +28,7 @@ public class DemoServer {
             //异步IO，需要使用TFramedTransport，它将分块缓存读取。
             TTransportFactory transportFactory = new TFramedTransport.Factory();
             //使用高密度二进制协议
-            TProtocolFactory proFactory = new TCompactProtocol.Factory();
+            TProtocolFactory proFactory = new TBinaryProtocol.Factory();
             //发布多个服务
             TMultiplexedProcessor processor = new TMultiplexedProcessor();
             processor.registerProcessor(ClassNameUtils.getClassName(Hello.class), new Hello.Processor<>(new HelloServer()));

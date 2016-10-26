@@ -5,7 +5,7 @@ import com.github.sofn.trpc.core.exception.TRpcException;
 import com.github.sofn.trpc.core.utils.ClassNameUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TServiceClient;
-import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TMultiplexedProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TFramedTransport;
@@ -38,7 +38,7 @@ public class BlockTrpcClient extends AbstractTrpcClient<TServiceClient> {
             throw new TRpcException(e);
         }
 
-        this.protocol = new TCompactProtocol(transport);
+        this.protocol = new TBinaryProtocol(transport);
     }
 
     @Override

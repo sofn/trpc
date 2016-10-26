@@ -6,6 +6,7 @@ import com.github.sofn.trpc.core.config.ServiceArgs;
 import com.github.sofn.trpc.core.config.ThriftServerInfo;
 import com.github.sofn.trpc.core.utils.NetUtils;
 import com.github.sofn.trpc.core.utils.ValidationUtils;
+import com.github.sofn.trpc.server.netty.NettyServerArgs;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
@@ -33,6 +34,7 @@ public class ServerArgs {
     @Size(min = 1, max = 100)
     @Singular
     private List<ServiceArgs> services = Collections.emptyList();
+    private NettyServerArgs nettyServerArgs;
     @NotBlank
     private String appkey;  //localAppKey
     @NotBlank

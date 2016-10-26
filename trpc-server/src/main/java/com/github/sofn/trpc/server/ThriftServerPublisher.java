@@ -2,9 +2,10 @@ package com.github.sofn.trpc.server;
 
 import com.github.sofn.trpc.core.config.ServiceArgs;
 import com.github.sofn.trpc.server.config.ServerArgs;
+import com.github.sofn.trpc.server.netty.TNettyServer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TMultiplexedProcessor;
-import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadedSelectorServer;
@@ -38,21 +39,28 @@ public class ThriftServerPublisher {
                 }
                 processor.registerProcessor(className, service.getProcessor());
             }
-            TNonblockingServerSocket serverTransport = new TNonblockingServerSocket(new InetSocketAddress(serverArgs.getHost(), serverArgs.getPort()));
-            //异步IO，需要使用TFramedTransport，它将分块缓存读取。
-            TTransportFactory transportFactory = new TFramedTransport.Factory();
-            //使用高密度二进制协议
-            TProtocolFactory proFactory = new TCompactProtocol.Factory();
-            // Use this for a multithreaded key
-            this.server = new TThreadedSelectorServer(new
-                    TThreadedSelectorServer.Args(serverTransport)
-                    .transportFactory(transportFactory)
-                    .protocolFactory(proFactory)
-                    .processor(processor)
-            );
+            if (serverArgs.getNettyServerArgs() != null) {
+                this.server = new TNettyServer(serverArgs.getNettyServerArgs().ip(serverArgs.getHost()).port(serverArgs.getPort()));
+            } else {
+                TNonblockingServerSocket serverTransport = new TNonblockingServerSocket(new InetSocketAddress(serverArgs.getHost(), serverArgs.getPort()));
+                //异步IO，需要使用TFramedTransport，它将分块缓存读取。
+                TTransportFactory transportFactory = new TFramedTransport.Factory();
+                //使用高密度二进制协议
+                TProtocolFactory proFactory = new TBinaryProtocol.Factory();
+                // Use this for a multithreaded key
+                this.server = new TThreadedSelectorServer(new
+                        TThreadedSelectorServer.Args(serverTransport)
+                        .transportFactory(transportFactory)
+                        .protocolFactory(proFactory)
+                        .processor(processor)
+                );
+            }
             log.info("Starting the Thrift key...");
-            server.setServerEventHandler(new TrpcRegistryEventHandler(serverArgs));
-            server.serve();
+            this.server.setServerEventHandler(new TrpcRegistryEventHandler(serverArgs));
+            this.server.serve();
+            if (this.serverArgs.getNettyServerArgs() != null) {
+                ((TNettyServer) this.server).waitForClose();
+            }
         } catch (Exception e) {
             log.error("publish thrift key error", e);
         }
