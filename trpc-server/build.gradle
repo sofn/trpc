@@ -1,4 +1,5 @@
 dependencies {
     compile project(":trpc-core")
     testCompile project(':trpc-core').sourceSets.test.output
+    compile group: 'io.netty', name: 'netty-all', version: "${nettyVersion}"
 }
